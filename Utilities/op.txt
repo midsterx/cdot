@@ -1,15 +1,2 @@
-int
 
 IDENTIFIER was accepteda
-=
-
-CONSTANT was accepted2
-;
-
-
-char
-
-IDENTIFIER was acceptedb
-;
-
-

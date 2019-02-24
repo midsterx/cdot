@@ -1,0 +1,87 @@
+"continue"		{   return(CONTINUE); }
+"break"			{   return(BREAK); }
+"goto"			{   return(GOTO); }
+"return"		{   return(RETURN); }
+
+
+"do"			{   return(DO);    }
+"while"			{   return(WHILE); }
+"if"			{   return(IF);    }
+"else"			{   return(ELSE);  }
+
+
+"struct"		{   return(STRUCT); }
+"union"			{   return(UNION);  }
+
+
+"short"			{   return(SHORT);   }
+"signed"		{   return(SIGNED);  }
+"sizeof"		{   return(SIZEOF);  }
+"static"		{   return(STATIC);  }
+"unsigned"		{   return(UNSIGNED);}
+"void"			{   return(VOID); 	 }
+
+[a-zA-Z]?'(\\.|[^\\'\n])+'			{   return(CONSTANT); }
+	
+[0-9]+								{   return(CONSTANT); }
+{ [0-9]}*"."{ [0-9]}+				{   return(CONSTANT); }
+{ [0-9]}+"."{ [0-9]}*				{   return(CONSTANT); }
+
+
+
+
+[a-zA-Z]?\"(\\.|[^\\"\n])*\"		{   return(STRING_LITERAL); }
+
+	/* Assignment Operators */
+
+"+="			{   return(ADD_ASSIGN); }
+"-="			{   return(SUB_ASSIGN); }
+"*="			{   return(MUL_ASSIGN); }
+"/="			{   return(DIV_ASSIGN); }
+"%="			{   return(MOD_ASSIGN); }
+	
+	/*Bitwise Operators*/
+
+">>"			{   return(RIGHT_OP); }
+"<<"			{   return(LEFT_OP); }
+
+	/*Unary Operators*/
+
+"++"			{   return(INC_OP); }
+"--"			{   return(DEC_OP); }
+
+	/*Logical Operators*/
+
+"&&"			{   return(AND_OP); }
+"||"			{   return(OR_OP); }
+
+	/*Relational Operators*/
+
+"<="			{   return(LE_OP); }
+">="			{   return(GE_OP); }
+"=="			{   return(EQ_OP); }
+"!="			{   return(NE_OP); }
+";"				{   return(';'); }
+"{"				{   return('{'); }
+"}"				{   return('}'); }
+","				{   return(','); }
+":"				{   return(':'); }
+"="				{   return('='); }
+"("				{   return('('); }
+")"				{   return(')'); }
+"["				{   return('['); }
+"]"				{   return(']'); }
+"."				{   return('.'); }
+"&"				{   return('&'); }
+"!"				{   return('!'); }
+"~"				{   return('~'); }
+"-"				{   return('-'); }
+"+"				{   return('+'); }
+"*"				{   return('*'); }
+"/"				{   return('/'); }
+"%"				{   return('%'); }
+"<"				{   return('<'); }
+">"				{   return('>'); }
+"^"				{   return('^'); }
+"|"				{   return('|'); }
+"?"				{   return('?'); }

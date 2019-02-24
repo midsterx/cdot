@@ -1,2 +1,1 @@
-int a = 2;
-char b;
+a = a + 5;
