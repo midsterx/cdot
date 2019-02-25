@@ -1,0 +1,3 @@
+lex lex_trial.l
+yacc -d basic.y
+gcc lex.yy.c y.tab.c -ll -ly
