@@ -23,9 +23,13 @@ void show(void);
 "void"			{ show(); return(VOID); }
 "while"			{ show(); return(WHILE); }
 
-[a-zA-Z_]([a-zA-Z_]|[0-9])*		{ printf("\nIDENTIFIER was accepted"); show(); return(check_type()); }
+[a-zA-Z_]([a-zA-Z_]|[0-9])*		{ show(); return(check_type()); }
 
-[0-9]*							{ printf("\nCONSTANT was accepted"); show(); return(CONSTANT);}
+([0-9])*								{ show(); return(CONSTANT);}
+([0-9])+([Ee][+-]?([0-9])+)				{ show(); return(CONSTANT); }
+([0-9])*"."([0-9])+([Ee][+-]?([0-9])+)?	{ show(); return(CONSTANT); }
+([0-9])+"."([0-9])*([Ee][+-]?([0-9])+)?	{ show(); return(CONSTANT); }
+
 
 ";"			{ show(); return(';'); }
 "{" 		{ show(); return('{'); }
@@ -68,7 +72,7 @@ void comment(void)
 void show(void)
 {
 	ECHO;
-	printf("\n");
+	printf(" ");
 }
 
 
