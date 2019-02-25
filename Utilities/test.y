@@ -7,18 +7,17 @@
 %%
 
 start_state
-	: external_declaration
+	: external_declaration				 
 	| start_state external_declaration
 	;
 
 external_declaration
 	: function_definition
-	| declaration
+	| declaration   					
 	| statement
 	;
 
-
-
+/*FUNCTIONS*/
 
 function_definition 
 	: type_specifier declarator '(' params ')' compound_statement	{printf("hello world\n");}
@@ -43,34 +42,27 @@ paramId
 	: IDENTIFIER 
 	;
 
+/*DECLARATIONS*/
+
 declarator
-	: IDENTIFIER
+	: IDENTIFIER    
 	;
 
 
 declaration
-	: declaration_specifiers ';' {printf("i reached declaration\n");}
-	| declaration_specifiers init_declarator_list ';'
+	: type_specifier ';' 
+	| type_specifier init_declarator_list ';'
 	;
 
 init_declarator_list
-	: init_declarator
+	: init_declarator        
 	| init_declarator_list ',' init_declarator
 	;
 
 init_declarator
-	: declarator
+	: declarator   
 	| declarator '=' primary_expression
-	| declarator '=' simple_expression
-	;
-
-
-
-
-
-declaration_specifiers
-	: type_specifier
-	| type_specifier declaration_specifiers
+	| declarator '=' simple_expression 		
 	;
 
 type_specifier
@@ -81,6 +73,8 @@ type_specifier
 	| FLOAT
 	| DOUBLE
 	;
+
+
 
 
 compound_statement
@@ -107,16 +101,16 @@ primary_expression
 	;
 
 statement
-	: expression_statement
+	: expression_statement 
 	| compound_statement
 	;
 
 expression_statement
-	: expression ';' {printf("I reached here2!\n");}
+	: expression ';' 
 	| ';'
 	;
 expression
-	: mutable '=' expression {printf("I reached here2!\n");}
+	: mutable '=' expression 
 	| simple_expression
 	;
 
@@ -137,30 +131,38 @@ rel_expression
 	;
 
 sum_expression
-	: sum_expression sumop term 
+	: sum_expression sumop term  
 	| term
 	;
 sumop
-	: '+'
+	: '+' 
 	| '-'
 	;
 
 term
 	: term mulop unary_expression 
+	| unary_expression
 	;
 
 mulop
 	: '*'
 	| '/'
 	;
+
+
 unary_expression 
 	: factor
 	;
+
 factor
 	: immutable
+	| mutable
+	| '(' simple_expression ')'
 	;
+
+
 immutable
-	: CONSTANT
+	: CONSTANT  
 	;
 
 
