@@ -174,6 +174,7 @@ mutable
 %%
 #include <stdio.h>
 extern char yytext[];
+// extern int yylineno;
 
 void main()
 {
