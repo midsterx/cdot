@@ -1,7 +1,14 @@
-void fun ( int x , char y ) 
- { 
- 	 int a = 5 , b = 6 ; 
- 	 c = b + 2 ; 
- 	 float d = ( ( x + y ) * 2 ) / c ; 
- 
- } hello world
+1#include <stdio.h> 
+2 #include "jdjfsld" 
+3 
+4 void fun ( int x , char y ) 
+5 { 
+6 	 int a = 5 , b = 6 ; 
+7 	 
+8 	 int c = b + 2 ; 
+9 	 int d ; 
+10 	 int y ; 
+11 	 int z ; 
+12 	 
+13 
+14 } hello world
