@@ -804,12 +804,12 @@ YY_RULE_SETUP
 case 3:
 YY_RULE_SETUP
 #line 14 "test.l"
-{ show(); }
+{ show(); return(HEADER); }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 15 "test.l"
-{ show(); }
+{ show(); return(HEADER); }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP

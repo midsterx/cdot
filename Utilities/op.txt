@@ -5,10 +5,29 @@
 5 { 
 6 	 int a = 5 , b = 6 ; 
 7 	 
-8 	 int c = b + 2 ; 
-9 	 int d ; 
-10 	 int y ; 
-11 	 int z ; 
-12 	 
-13 
-14 } hello world
+8 	 int c = b + 
+
+SYMBOL TABLE
+
+Token No.	Type	Symbol	Value	Scope No.	Line No.
+
+0	preprocessor directive	include	-	0	1
+1	preprocessor directive	include	-	0	2
+2	keyword	void	-	0	4
+3	identfier	-	-	0	4
+4	keyword	int	-	0	4
+5	identfier	-	-	0	4
+6	keyword	char	-	0	4
+7	identfier	-	-	0	4
+8	keyword	int	-	1	6
+9	identfier	-	-	1	6
+10	asgnop	=	-	1	6
+11	constant	-	-	1	6
+12	identfier	-	-	1	6
+13	asgnop	=	-	1	6
+14	constant	-	-	1	6
+15	punctuation	;	-	1	6
+16	keyword	int	-	1	8
+17	identfier	-	-	1	8
+18	asgnop	=	-	1	8
+19	identifier	-	-	1	8

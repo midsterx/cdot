@@ -11,8 +11,8 @@ void myerror(void);
 "/*"			{ comment(); }
 "//"[^\n]*      { /* consume //-single comment */ }
 
-"#include"[ ]*"<".*">" { show(); }
-"#include"[ ]*"\"".*"\"" { show(); }
+"#include"[ ]*"<".*">" { show(); return(HEADER); }
+"#include"[ ]*"\"".*"\"" { show(); return(HEADER); }
 "char"			{ show(); return(CHAR); }
 "do"			{ show(); return(DO); }
 "double"		{ show(); return(DOUBLE); }
