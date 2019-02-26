@@ -57,7 +57,8 @@ extern int yydebug;
     IF = 267,
     ELSE = 268,
     WHILE = 269,
-    DO = 270
+    DO = 270,
+    HEADER = 271
   };
 #endif
 /* Tokens.  */
@@ -74,6 +75,7 @@ extern int yydebug;
 #define ELSE 268
 #define WHILE 269
 #define DO 270
+#define HEADER 271
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
