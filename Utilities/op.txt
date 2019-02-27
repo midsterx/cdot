@@ -1,33 +1,78 @@
 1#include <stdio.h> 
-2 #include "jdjfsld" 
-3 
-4 void fun ( int x , char y ) 
-5 { 
-6 	 int a = 5 , b = 6 ; 
-7 	 
-8 	 int c = b + 
+2 
+3 void fun ( int x , char y ) 
+4 { 
+5 	 int a = 5 , b = 6 ; 
+6 	 
+7 	 int b = d + c ; 
+8 	 int a = c + 3 , d = 5 + 4 ; 
+9 	 do { 
+10 	 	 int a ; 
+11 	 	 int b ; 
+12 	 	 int c ; 
+13 	 } while ( a > 0 ) ; 
+14 	 int d ; 
+15 	 int y ; 
+16 	 int z ; 
+17 	 
+18 
+19 } 
 
 SYMBOL TABLE
 
 Token No.	Type	Symbol	Value	Scope No.	Line No.
 
 0	preprocessor directive	include	-	0	1
-1	preprocessor directive	include	-	0	2
-2	keyword	void	-	0	4
-3	identfier	-	-	0	4
-4	keyword	int	-	0	4
-5	identfier	-	-	0	4
-6	keyword	char	-	0	4
-7	identfier	-	-	0	4
-8	keyword	int	-	1	6
-9	identfier	-	-	1	6
-10	asgnop	=	-	1	6
-11	constant	-	-	1	6
-12	identfier	-	-	1	6
-13	asgnop	=	-	1	6
-14	constant	-	-	1	6
-15	punctuation	;	-	1	6
-16	keyword	int	-	1	8
-17	identfier	-	-	1	8
-18	asgnop	=	-	1	8
-19	identifier	-	-	1	8
+1	keyword	void	-	0	3
+2	identfier	-	-	0	3
+3	keyword	int	-	0	3
+4	identfier	-	-	0	3
+5	keyword	char	-	0	3
+6	identfier	-	-	0	3
+7	keyword	int	-	1	5
+8	identfier	-	-	1	5
+9	asgnop	=	-	1	5
+10	constant	-	-	1	5
+11	identfier	-	-	1	5
+12	asgnop	=	-	1	5
+13	constant	-	-	1	5
+14	punctuation	;	-	1	5
+15	keyword	int	-	1	7
+16	identfier	-	-	1	7
+17	asgnop	=	-	1	7
+18	identfier	-	-	1	7
+19	sumop	+	-	1	7
+20	identfier	-	-	1	7
+21	punctuation	;	-	1	7
+22	keyword	int	-	1	8
+23	identfier	-	-	1	8
+24	asgnop	=	-	1	8
+25	identfier	-	-	1	8
+26	sumop	+	-	1	8
+27	constant	-	-	1	8
+28	identfier	-	-	1	8
+29	asgnop	=	-	1	8
+30	constant	-	-	1	8
+31	sumop	+	-	1	8
+32	constant	-	-	1	8
+33	punctuation	;	-	1	8
+34	keyword	int	-	2	10
+35	identfier	-	-	2	10
+36	punctuation	;	-	2	10
+37	keyword	int	-	2	11
+38	identfier	-	-	2	11
+39	punctuation	;	-	2	11
+40	keyword	int	-	2	12
+41	identfier	-	-	2	12
+42	punctuation	;	-	2	12
+43	identfier	-	-	1	13
+44	constant	-	-	1	13
+45	keyword	int	-	1	14
+46	identfier	-	-	1	14
+47	punctuation	;	-	1	14
+48	keyword	int	-	1	15
+49	identfier	-	-	1	15
+50	punctuation	;	-	1	15
+51	keyword	int	-	1	16
+52	identfier	-	-	1	16
+53	punctuation	;	-	1	16

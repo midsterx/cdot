@@ -54,11 +54,33 @@ extern int yydebug;
     FLOAT = 264,
     DOUBLE = 265,
     VOID = 266,
-    IF = 267,
-    ELSE = 268,
-    WHILE = 269,
-    DO = 270,
-    HEADER = 271
+    SHORT = 267,
+    UNSIGNED = 268,
+    SIGNED = 269,
+    IF = 270,
+    ELSE = 271,
+    WHILE = 272,
+    DO = 273,
+    BREAK = 274,
+    CONTINUE = 275,
+    RETURN = 276,
+    RELOP = 277,
+    AND = 278,
+    OR = 279,
+    NOT = 280,
+    SHORTHANDADD = 281,
+    SHORTHANDSUB = 282,
+    SHORTHANDMULT = 283,
+    SHORTHANDDIV = 284,
+    INCREMENT = 285,
+    DECREMENT = 286,
+    STRUCT = 287,
+    STATIC = 288,
+    EXTERN = 289,
+    REGISTER = 290,
+    AUTO = 291,
+    ARRTYPE = 292,
+    HEADER = 293
   };
 #endif
 /* Tokens.  */
@@ -71,11 +93,33 @@ extern int yydebug;
 #define FLOAT 264
 #define DOUBLE 265
 #define VOID 266
-#define IF 267
-#define ELSE 268
-#define WHILE 269
-#define DO 270
-#define HEADER 271
+#define SHORT 267
+#define UNSIGNED 268
+#define SIGNED 269
+#define IF 270
+#define ELSE 271
+#define WHILE 272
+#define DO 273
+#define BREAK 274
+#define CONTINUE 275
+#define RETURN 276
+#define RELOP 277
+#define AND 278
+#define OR 279
+#define NOT 280
+#define SHORTHANDADD 281
+#define SHORTHANDSUB 282
+#define SHORTHANDMULT 283
+#define SHORTHANDDIV 284
+#define INCREMENT 285
+#define DECREMENT 286
+#define STRUCT 287
+#define STATIC 288
+#define EXTERN 289
+#define REGISTER 290
+#define AUTO 291
+#define ARRTYPE 292
+#define HEADER 293
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
