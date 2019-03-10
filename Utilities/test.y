@@ -19,16 +19,99 @@
 		int line_num;
 		int scope_num;
 		struct node *next;
-	} *symtab[MAX];
+	};
+
+	struct node *symtab[MAX];
+	for(int i=0;i<MAX;i++)
+	{
+		symtab[i]=NULL;
+	}
+	
 
 	int token_count = 0; // total tokens count
 	int scope_count = 0; // scope count
 
-	void printsymtab(void);
-	struct node* lookup(const char* str);
-	int hash(char *str);
-	void insert(int tn, char t[], char s[], char v[], int ln, int sn, int token_count_flag, int scope_count_flag);
-	char* find(char* str);
+	int hash(const char* str)
+	{
+		int len = strlen(str);
+	    int hash_value = 0;
+
+	    for(int i=0; i<len; i++)
+	    {
+	    	hash_value = (hash_value * PRIME + str[i]) % MOD;
+	    }
+
+	    printf("Hashed result:%d\n",hash_value);
+
+	    return hash_value;
+	}
+
+	struct node *lookup(const char *str) 
+	{
+		int len = strlen(str);
+		int hashValue = hash(str);
+
+		//get node at hash value
+		struct node *temp = symtab[hashValue];
+
+		while(temp != NULL) 
+		{
+		    if(!strcmp(str, temp->symbol))
+		        return temp;
+		    temp = temp->next;
+		}
+		return NULL;
+	} 
+
+	void insert(int tn, char t[], char s[], char v[], int ln, int sn, int token_count_flag, int scope_count_flag) 
+	{
+	    if(lookup(s) != NULL)
+	        return;
+
+		int hashValue = hash(s);
+	    struct node *temp = malloc(sizeof(struct node));
+
+	    temp->token_num = tn++;
+		strcpy(temp->type, t);
+		strcpy(temp->symbol, s);
+		strcpy(temp->value, v);
+		temp->scope_num = sn;
+		temp->line_num = ln;
+		
+		if (symtab[hashValue] == NULL)
+		{
+			symtab[hashValue] = temp;
+		}
+	    else
+		{
+			struct node* start = symtab[hashValue];
+			while (start->next != NULL)
+				start = start->next;
+			start->next = temp;
+		}
+		
+
+	    //temp->next = symtab[hashValue];
+	    //symtab[hashValue] = temp;
+	}
+
+
+
+	void printsymtab(void)
+	{
+		printf("\n\nSYMBOL TABLE\n\n");
+		printf("Token No.\tType\tSymbol\tValue\tScope No.\tLine No.");
+		int i;
+		printf("\n");
+		for (i = 0;i < MAX;i++)
+		{
+			printf("\n%d\t%s\t%s\t%s\t%d\t%d", symtab[i]->token_num, symtab[i]->type, symtab[i]->symbol, symtab[i]->value, symtab[i]->scope_num, symtab[i]->line_num);
+		}
+	}
+
+
+
+	
 %}
 
 %token IDENTIFIER CONSTANT 
@@ -319,7 +402,7 @@ mutable
 void main()
 {
 	yyparse();
-	printsymtab();
+	// printsymtab();
 }
 
 
@@ -329,79 +412,4 @@ void yyerror(char const *s)
 	printf("\nParse Failed\n");
 	printf("Error Line Number: %d %s", yylineno, s);
 	fflush(stdout);
-}
-
-//hash function
-int hash(char* str)
-{
-	int len = strlen(str);
-    int hash_value = 0;
-
-    for(int i=0; i<len; i++)
-    {
-    	hash_value = (hash_value * PRIME + str[i]) % MOD;
-    }
-
-    printf("Hashed result:%d\n",hash_value);
-
-    return hash_value;
-} 
-
-//insert function
-void insert(int tn, char t[], char s[], char v[], int ln, int sn, int token_count_flag, int scope_count_flag) 
-{
-    if(lookup(s) != NULL)
-        return;
-	int hashValue = hash(s);
-    struct node *temp = malloc(sizeof(struct node));
-
-    temp->token_num = tn++;
-	strcpy(temp->type, t);
-	strcpy(temp->symbol, s);
-	strcpy(temp->value, v);
-	temp->scope_num = sn;
-	temp->line_num = ln;
-	
-	if (symtab[hashValue] == NULL)
-	{
-		symtab[hashValue] = temp;
-	}
-    else
-	{
-		struct node* start = symtab[hashValue];
-		while (start->next != NULL)
-			start = start->next;
-		start->next = temp;
-	}
-    // temp->next = symtab[hashValue];
-    // symtab[hashValue] = temp;
-}
-
-struct node *lookup(const char *str) 
-{
-	int len = strlen(str);
-	int hashValue = hash(str);
-
-	//get node at hash value
-	struct node *temp = symtab[hashValue];
-
-	while(temp != NULL) 
-	{
-	    if(!strcmp(str, temp->symbol))
-	        return temp;
-	    temp = temp->next;
-	}
-	return NULL;
-}
-
-void printsymtab(void)
-{
-	printf("\n\nSYMBOL TABLE\n\n");
-	printf("Token No.\tType\tSymbol\tValue\tScope No.\tLine No.");
-	int i;
-	printf("\n");
-	for (i = 0;i < MAX;i++)
-	{
-		printf("\n%d\t%s\t%s\t%s\t%d\t%d", symtab[i]->token_num, symtab[i]->type, symtab[i]->symbol, symtab[i]->value, symtab[i]->scope_num, symtab[i]->line_num);
-	}
 }

@@ -84,18 +84,101 @@
 		int line_num;
 		int scope_num;
 		struct node *next;
-	} *symtab[MAX];
+	};
+
+	struct node *symtab[MAX];
+	for(int i=0;i<MAX;i++)
+	{
+		symtab[i]=NULL;
+	}
+	
 
 	int token_count = 0; // total tokens count
 	int scope_count = 0; // scope count
 
-	void printsymtab(void);
-	struct node* lookup(const char* str);
-	int hash(char *str);
-	void insert(int tn, char t[], char s[], char v[], int ln, int sn, int token_count_flag, int scope_count_flag);
-	char* find(char* str);
+	int hash(const char* str)
+	{
+		int len = strlen(str);
+	    int hash_value = 0;
 
-#line 99 "y.tab.c" /* yacc.c:339  */
+	    for(int i=0; i<len; i++)
+	    {
+	    	hash_value = (hash_value * PRIME + str[i]) % MOD;
+	    }
+
+	    printf("Hashed result:%d\n",hash_value);
+
+	    return hash_value;
+	}
+
+	struct node *lookup(const char *str) 
+	{
+		int len = strlen(str);
+		int hashValue = hash(str);
+
+		//get node at hash value
+		struct node *temp = symtab[hashValue];
+
+		while(temp != NULL) 
+		{
+		    if(!strcmp(str, temp->symbol))
+		        return temp;
+		    temp = temp->next;
+		}
+		return NULL;
+	} 
+
+	void insert(int tn, char t[], char s[], char v[], int ln, int sn, int token_count_flag, int scope_count_flag) 
+	{
+	    if(lookup(s) != NULL)
+	        return;
+
+		int hashValue = hash(s);
+	    struct node *temp = malloc(sizeof(struct node));
+
+	    temp->token_num = tn++;
+		strcpy(temp->type, t);
+		strcpy(temp->symbol, s);
+		strcpy(temp->value, v);
+		temp->scope_num = sn;
+		temp->line_num = ln;
+		
+		if (symtab[hashValue] == NULL)
+		{
+			symtab[hashValue] = temp;
+		}
+	    else
+		{
+			struct node* start = symtab[hashValue];
+			while (start->next != NULL)
+				start = start->next;
+			start->next = temp;
+		}
+		
+
+	    //temp->next = symtab[hashValue];
+	    //symtab[hashValue] = temp;
+	}
+
+
+
+	void printsymtab(void)
+	{
+		printf("\n\nSYMBOL TABLE\n\n");
+		printf("Token No.\tType\tSymbol\tValue\tScope No.\tLine No.");
+		int i;
+		printf("\n");
+		for (i = 0;i < MAX;i++)
+		{
+			printf("\n%d\t%s\t%s\t%s\t%d\t%d", symtab[i]->token_num, symtab[i]->type, symtab[i]->symbol, symtab[i]->value, symtab[i]->scope_num, symtab[i]->line_num);
+		}
+	}
+
+
+
+	
+
+#line 182 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -222,7 +305,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 226 "y.tab.c" /* yacc.c:358  */
+#line 309 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -523,18 +606,18 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    53,    53,    54,    55,    59,    60,    61,    62,    68,
-      72,    73,    77,    78,    82,    83,    87,    96,   103,   104,
-     105,   109,   110,   114,   115,   115,   116,   120,   121,   125,
-     126,   130,   131,   132,   133,   137,   138,   139,   140,   141,
-     142,   143,   144,   145,   146,   147,   148,   149,   150,   154,
-     158,   159,   163,   167,   174,   175,   176,   177,   178,   179,
-     180,   181,   185,   186,   190,   191,   192,   193,   194,   195,
-     196,   197,   202,   202,   203,   203,   207,   208,   212,   213,
-     217,   218,   222,   223,   227,   231,   235,   239,   240,   244,
-     245,   249,   250,   254,   255,   259,   260,   264,   265,   269,
-     270,   274,   275,   280,   281,   285,   286,   291,   295,   296,
-     297,   302,   310
+       0,   136,   136,   137,   138,   142,   143,   144,   145,   151,
+     155,   156,   160,   161,   165,   166,   170,   179,   186,   187,
+     188,   192,   193,   197,   198,   198,   199,   203,   204,   208,
+     209,   213,   214,   215,   216,   220,   221,   222,   223,   224,
+     225,   226,   227,   228,   229,   230,   231,   232,   233,   237,
+     241,   242,   246,   250,   257,   258,   259,   260,   261,   262,
+     263,   264,   268,   269,   273,   274,   275,   276,   277,   278,
+     279,   280,   285,   285,   286,   286,   290,   291,   295,   296,
+     300,   301,   305,   306,   310,   314,   318,   322,   323,   327,
+     328,   332,   333,   337,   338,   342,   343,   347,   348,   352,
+     353,   357,   358,   363,   364,   368,   369,   374,   378,   379,
+     380,   385,   393
 };
 #endif
 
@@ -1471,85 +1554,85 @@ yyreduce:
   switch (yyn)
     {
         case 16:
-#line 88 "test.y" /* yacc.c:1646  */
+#line 171 "test.y" /* yacc.c:1646  */
     {
 			insert(token_count, "identfier", (yyvsp[0]), "-", scope_count, yylineno, 1, 0);
 		}
-#line 1479 "y.tab.c" /* yacc.c:1646  */
+#line 1562 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 97 "test.y" /* yacc.c:1646  */
+#line 180 "test.y" /* yacc.c:1646  */
     {
 			insert(token_count, "identfier", (yyvsp[0]), "-", scope_count, yylineno, 1, 0);
 		}
-#line 1487 "y.tab.c" /* yacc.c:1646  */
+#line 1570 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 115 "test.y" /* yacc.c:1646  */
+#line 198 "test.y" /* yacc.c:1646  */
     {printf("declarator\n");}
-#line 1493 "y.tab.c" /* yacc.c:1646  */
+#line 1576 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 164 "test.y" /* yacc.c:1646  */
+#line 247 "test.y" /* yacc.c:1646  */
     {
 			insert(token_count, "identfier", (yyvsp[0]), "-", scope_count, yylineno, 1, 0);
 		}
-#line 1501 "y.tab.c" /* yacc.c:1646  */
+#line 1584 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 168 "test.y" /* yacc.c:1646  */
+#line 251 "test.y" /* yacc.c:1646  */
     {
 			insert(token_count, "identfier", (yyvsp[0]), "-", scope_count, yylineno, 1, 0);
 		}
-#line 1509 "y.tab.c" /* yacc.c:1646  */
+#line 1592 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 202 "test.y" /* yacc.c:1646  */
+#line 285 "test.y" /* yacc.c:1646  */
     {scope_count++;}
-#line 1515 "y.tab.c" /* yacc.c:1646  */
+#line 1598 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 202 "test.y" /* yacc.c:1646  */
+#line 285 "test.y" /* yacc.c:1646  */
     {scope_count--;}
-#line 1521 "y.tab.c" /* yacc.c:1646  */
+#line 1604 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 74:
-#line 203 "test.y" /* yacc.c:1646  */
+#line 286 "test.y" /* yacc.c:1646  */
     {scope_count++;}
-#line 1527 "y.tab.c" /* yacc.c:1646  */
+#line 1610 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 203 "test.y" /* yacc.c:1646  */
+#line 286 "test.y" /* yacc.c:1646  */
     {scope_count--;}
-#line 1533 "y.tab.c" /* yacc.c:1646  */
+#line 1616 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 111:
-#line 303 "test.y" /* yacc.c:1646  */
+#line 386 "test.y" /* yacc.c:1646  */
     {
 			insert(token_count, "identfier", (yyvsp[0]), "-", scope_count, yylineno, 1, 0);
 		}
-#line 1541 "y.tab.c" /* yacc.c:1646  */
+#line 1624 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 112:
-#line 311 "test.y" /* yacc.c:1646  */
+#line 394 "test.y" /* yacc.c:1646  */
     {
 			insert(token_count, "identfier", (yyvsp[0]), "-", scope_count, yylineno, 1, 0);
 		}
-#line 1549 "y.tab.c" /* yacc.c:1646  */
+#line 1632 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1553 "y.tab.c" /* yacc.c:1646  */
+#line 1636 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1777,14 +1860,14 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 316 "test.y" /* yacc.c:1906  */
+#line 399 "test.y" /* yacc.c:1906  */
 
 
 
 void main()
 {
 	yyparse();
-	printsymtab();
+	// printsymtab();
 }
 
 
@@ -1794,79 +1877,4 @@ void yyerror(char const *s)
 	printf("\nParse Failed\n");
 	printf("Error Line Number: %d %s", yylineno, s);
 	fflush(stdout);
-}
-
-//hash function
-int hash(char* str)
-{
-	int len = strlen(str);
-    int hash_value = 0;
-
-    for(int i=0; i<len; i++)
-    {
-    	hash_value = (hash_value * PRIME + str[i]) % MOD;
-    }
-
-    printf("Hashed result:%d\n",hash_value);
-
-    return hash_value;
-} 
-
-//insert function
-void insert(int tn, char t[], char s[], char v[], int ln, int sn, int token_count_flag, int scope_count_flag) 
-{
-    if(lookup(s) != NULL)
-        return;
-	int hashValue = hash(s);
-    struct node *temp = malloc(sizeof(struct node));
-
-    temp->token_num = tn++;
-	strcpy(temp->type, t);
-	strcpy(temp->symbol, s);
-	strcpy(temp->value, v);
-	temp->scope_num = sn;
-	temp->line_num = ln;
-	
-	if (symtab[hashValue] == NULL)
-	{
-		symtab[hashValue] = temp;
-	}
-    else
-	{
-		struct node* start = symtab[hashValue];
-		while (start->next != NULL)
-			start = start->next;
-		start->next = temp;
-	}
-    // temp->next = symtab[hashValue];
-    // symtab[hashValue] = temp;
-}
-
-struct node *lookup(const char *str) 
-{
-	int len = strlen(str);
-	int hashValue = hash(str);
-
-	//get node at hash value
-	struct node *temp = symtab[hashValue];
-
-	while(temp != NULL) 
-	{
-	    if(!strcmp(str, temp->symbol))
-	        return temp;
-	    temp = temp->next;
-	}
-	return NULL;
-}
-
-void printsymtab(void)
-{
-	printf("\n\nSYMBOL TABLE\n\n");
-	printf("Token No.\tType\tSymbol\tValue\tScope No.\tLine No.");
-	int i;
-	printf("\n");
-	// for (i = 0;i < MAX;i++)
-	// {
-	// 	printf("\n%d\t%s\t%s\t%s\t%d\t%d", symtab[i]->token_num, symtab[i]->type, symtab[i]->symbol, symtab[i]->value, symtab[i]->scope_num, symtab[i]->line_num);
-	// }
 }
