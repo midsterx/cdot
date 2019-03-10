@@ -3,8 +3,15 @@
 #include "y.tab.h"
 #include <string.h>
 int line1_flag = 0;
+struct tokens
+{
+	char name[100];
+	char type[100];
+} toks[1000];
+int tok_count = 0;
 void show(void);
 void myerror(void);
+void comment(void);
 %}
 
 %%
@@ -13,74 +20,73 @@ void myerror(void);
 
 "#include"[ ]*"<".*">" { show(); return(HEADER); }
 "#include"[ ]*"\"".*"\"" { show(); return(HEADER); }
-"do"			{ show(); return(DO); }
-"else"			{ show(); return(ELSE); }
-"if"			{ show(); return(IF); }
-"while"			{ show(); return(WHILE); }
+"do"			{ show(); return(DO); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+"else"			{ show(); return(ELSE); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+"if"			{ show(); return(IF); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+"while"			{ show(); return(WHILE); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
 
 
-"int"			{ show(); return(INT); }
-"char"			{ show(); return(CHAR); }
-"long"			{ show(); return(LONG); }
-"void"			{ show(); return(VOID); }
-"double"		{ show(); return(DOUBLE); }
-"float"			{ show(); return(FLOAT); }
-"short"         { show(); return(SHORT); }
-"long"         { show(); return(LONG); }
-"unsigned"         { show(); return(UNSIGNED); }
-"signed"         { show(); return(SIGNED); }
+"int"			{ show(); return(INT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+"char"			{ show(); return(CHAR); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+"long"			{ show(); return(LONG); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+"void"			{ show(); return(VOID); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+"double"		{ show(); return(DOUBLE); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+"float"			{ show(); return(FLOAT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+"short"         { show(); return(SHORT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+"unsigned"         { show(); return(UNSIGNED); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+"signed"         { show(); return(SIGNED); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
 
 
-"static" { show(); return(STATIC); }
-"extern" { show(); return(EXTERN); }
-"register" { show(); return(REGISTER); }
-"auto" { show(); return(AUTO); }
+"static" { show(); return(STATIC); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword");}
+"extern" { show(); return(EXTERN); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword");}
+"register" { show(); return(REGISTER); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword");}
+"auto" { show(); return(AUTO); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
 
-"+=" { show(); return(SHORTHANDADD); }
-"-=" { show(); return(SHORTHANDSUB); }
-"*=" { show(); return(SHORTHANDMULT); }
-"/=" { show(); return(SHORTHANDDIV); }
-"!" { show(); return(NOT); }
+"+=" { show(); return(SHORTHANDADD); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"operator"); }
+"-=" { show(); return(SHORTHANDSUB); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"operator"); }
+"*=" { show(); return(SHORTHANDMULT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"operator"); }
+"/=" { show(); return(SHORTHANDDIV); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"operator"); }
+"!" { show(); return(NOT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"operator");}
 
-"++" { show(); return(INCREMENT); }
-"--" { show(); return(DECREMENT); }
+"++" { show(); return(INCREMENT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"operator"); }
+"--" { show(); return(DECREMENT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"operator"); }
 
-[><] { show(); return(RELOP); }
-">=" { show(); return(RELOP); }
-"<=" { show(); return(RELOP); }
-"==" { show(); return(RELOP); }
-"!=" { show(); return(RELOP); }
+[><] { show(); return(RELOP); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"operator"); }
+">=" { show(); return(RELOP); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"operator"); }
+"<=" { show(); return(RELOP); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"operator"); }
+"==" { show(); return(RELOP); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"operator"); }
+"!=" { show(); return(RELOP); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"operator"); }
 
-"&&" {show(); return(AND);}
-"||" {show(); return(OR);}
+"&&" {show(); return(AND); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"operator"); }
+"||" {show(); return(OR); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"operator"); }
 
-"break"     { show(); return(BREAK); }
-"continue"  { show(); return(CONTINUE); }
-"return"    { show(); return(RETURN); }
+"break"     { show(); return(BREAK); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+"continue"  { show(); return(CONTINUE); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+"return"    { show(); return(RETURN); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
 
-"struct" { show(); return(STRUCT); }
+"struct" { show(); return(STRUCT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword");}
 
-"[]" { show(); return(ARRTYPE); }
+"[]" { show(); return(ARRTYPE); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"symbol"); }
 
-[a-zA-Z_]([a-zA-Z_]|[0-9])*		{ show(); return(check_type()); }
+[a-zA-Z_]([a-zA-Z_]|[0-9])*		{ show(); return(check_type()); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"identifier"); }
 
-([0-9])*								{ show(); return(CONSTANT);}
-([0-9])+([Ee][+-]?([0-9])+)				{ show(); return(CONSTANT); }
-([0-9])*"."([0-9])+([Ee][+-]?([0-9])+)?	{ show(); return(CONSTANT); }
-([0-9])+"."([0-9])*([Ee][+-]?([0-9])+)?	{ show(); return(CONSTANT); }
+([0-9])*								{ show(); return(CONSTANT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"constant"); }
+([0-9])+([Ee][+-]?([0-9])+)				{ show(); return(CONSTANT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"constant"); }
+([0-9])*"."([0-9])+([Ee][+-]?([0-9])+)?	{ show(); return(CONSTANT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"constant"); }
+([0-9])+"."([0-9])*([Ee][+-]?([0-9])+)?	{ show(); return(CONSTANT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"constant"); }
 
 
-";"			{ show(); return(';'); }
-"{" 		{ show(); return('{'); }
-"}" 		{ show(); return('}'); }
-","			{ show(); return(','); }
-"="			{ show(); return('='); }
-"("			{ show(); return('('); }
-")"			{ show(); return(')'); }
-"-"			{ show(); return('-'); }
-"+"			{ show(); return('+'); }
-"*"			{ show(); return('*'); }
-"/"			{ show(); return('/'); }
+";"			{ show(); return(';'); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"symbol"); }
+"{" 		{ show(); return('{'); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"symbol"); }
+"}" 		{ show(); return('}'); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"symbol"); }
+","			{ show(); return(','); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"symbol"); }
+"="			{ show(); return('='); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"operator"); }
+"("			{ show(); return('('); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"symbol"); }
+")"			{ show(); return(')'); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"symbol"); }
+"-"			{ show(); return('-'); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"operator"); }
+"+"			{ show(); return('+'); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"operator"); }
+"*"			{ show(); return('*'); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"operator"); }
+"/"			{ show(); return('/'); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"operator"); }
 
 [\n]		{ yylineno++;
 			  show();
@@ -93,6 +99,13 @@ void myerror(void);
 
 int yywrap(void)
 {
+	FILE *fptr;
+	fptr = fopen("tokens.txt", "w+");
+	for (int i = 0;i < tok_count;i++)
+	{
+		fprintf(fptr, "<%s,%s>\n", toks[i].name, toks[i].type);
+	}
+	fclose(fptr);
 	return 1;
 }
 
