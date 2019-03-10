@@ -3,24 +3,32 @@
 	#include <string.h>
 	#include <stdlib.h>
 
+	#define MOD 1007
+	#define PRIME 23
+	#define MAX 300
+
 	extern int yylineno;
 	extern char yytext[];
 
-	struct symbol_table
+	struct node
 	{
 		int token_num;
-		char type[50];
-		char symbol[50];
-		char value[50];
+		char type[100];
+		char symbol[100];
+		char value[100];
 		int line_num;
 		int scope_num;
-	} symtab[300];
+		struct node *next;
+	} *symtab[MAX];
 
-	int count = 0; // symbol table element count
 	int token_count = 0; // total tokens count
 	int scope_count = 0; // scope count
 
 	void printsymtab(void);
+	struct node* lookup(const char* str);
+	int hash(char *str);
+	void insert(int tn, char t[], char s[], char v[], int ln, int sn, int token_count_flag, int scope_count_flag);
+	char* find(char* str);
 %}
 
 %token IDENTIFIER CONSTANT 
@@ -42,16 +50,7 @@
 %%
 
 start_state
-	: HEADER 
-		{
-			symtab[count].token_num = token_count++;
-			strcpy(symtab[count].type, "preprocessor directive");
-			strcpy(symtab[count].symbol, "include");
-			strcpy(symtab[count].value, "-");
-			symtab[count].scope_num = scope_count;
-			symtab[count].line_num = yylineno;
-			count++;
-		} start_state
+	: HEADER start_state
 	| external_declaration				 
 	| start_state external_declaration
 	;
@@ -87,13 +86,7 @@ paramIdList
 paramId
 	: IDENTIFIER 
 		{
-			symtab[count].token_num = token_count++;
-			strcpy(symtab[count].type, "identfier");
-			strcpy(symtab[count].symbol, "-");
-			strcpy(symtab[count].value, "-");
-			symtab[count].scope_num = scope_count;
-			symtab[count].line_num = yylineno;
-			count++;
+			insert(token_count, "identfier", $1, "-", scope_count, yylineno, 1, 0);
 		}
 	;
 
@@ -102,38 +95,13 @@ paramId
 declarator
 	: IDENTIFIER
 		{
-			symtab[count].token_num = token_count++;
-			strcpy(symtab[count].type, "identfier");
-			strcpy(symtab[count].symbol, "-");
-			strcpy(symtab[count].value, "-");
-			symtab[count].scope_num = scope_count;
-			symtab[count].line_num = yylineno;
-			count++;
+			insert(token_count, "identfier", $1, "-", scope_count, yylineno, 1, 0);
 		}    
 	;
 
-
 declaration
 	: scoped_type_specifier ';' 
-		{
-			symtab[count].token_num = token_count++;
-			strcpy(symtab[count].type, "punctuation");
-			strcpy(symtab[count].symbol, ";");
-			strcpy(symtab[count].value, "-");
-			symtab[count].scope_num = scope_count;
-			symtab[count].line_num = yylineno;
-			count++;
-		}
 	| scoped_type_specifier init_declarator_list ';' 
-		{
-			symtab[count].token_num = token_count++;
-			strcpy(symtab[count].type, "punctuation");
-			strcpy(symtab[count].symbol, ";");
-			strcpy(symtab[count].value, "-");
-			symtab[count].scope_num = scope_count;
-			symtab[count].line_num = yylineno;
-			count++;
-		}
 	| STRUCT IDENTIFIER declarator ';'
 	;
 
@@ -144,26 +112,8 @@ init_declarator_list
 
 init_declarator
 	: declarator   
-	| declarator {printf("declarator\n");} '=' 
-		{
-			symtab[count].token_num = token_count++;
-			strcpy(symtab[count].type, "asgnop");
-			strcpy(symtab[count].symbol, "=");
-			strcpy(symtab[count].value, "-");
-			symtab[count].scope_num = scope_count;
-			symtab[count].line_num = yylineno;
-			count++;
-		} primary_expression 
-	| declarator '=' 
-		{
-			symtab[count].token_num = token_count++;
-			strcpy(symtab[count].type, "asgnop");
-			strcpy(symtab[count].symbol, "=");
-			strcpy(symtab[count].value, "-");
-			symtab[count].scope_num = scope_count;
-			symtab[count].line_num = yylineno;
-			count++;
-		} simple_expression 	
+	| declarator {printf("declarator\n");} '=' primary_expression 
+	| declarator '=' simple_expression 	
 	;
 
 return_type_specifier
@@ -176,9 +126,6 @@ scoped_type_specifier
 	| type_specifier
 	;
 
-
-
-
 storage_class
 	: STATIC
 	| EXTERN
@@ -186,68 +133,13 @@ storage_class
 	| AUTO
 	;
 
-
 type_specifier
 	: VOID
-		{
-			symtab[count].token_num = token_count++;
-			strcpy(symtab[count].type, "keyword");
-			strcpy(symtab[count].symbol, "void");
-			strcpy(symtab[count].value, "-");
-			symtab[count].scope_num = scope_count;
-			symtab[count].line_num = yylineno;
-			count++;
-		}
 	| CHAR
-		{
-			symtab[count].token_num = token_count++;
-			strcpy(symtab[count].type, "keyword");
-			strcpy(symtab[count].symbol, "char");
-			strcpy(symtab[count].value, "-");
-			symtab[count].scope_num = scope_count;
-			symtab[count].line_num = yylineno;
-			count++;
-		}
 	| INT
-		{
-			symtab[count].token_num = token_count++;
-			strcpy(symtab[count].type, "keyword");
-			strcpy(symtab[count].symbol, "int");
-			strcpy(symtab[count].value, "-");
-			symtab[count].scope_num = scope_count;
-			symtab[count].line_num = yylineno;
-			count++;
-		}
 	| LONG
-		{
-			symtab[count].token_num = token_count++;
-			strcpy(symtab[count].type, "keyword");
-			strcpy(symtab[count].symbol, "long");
-			strcpy(symtab[count].value, "-");
-			symtab[count].scope_num = scope_count;
-			symtab[count].line_num = yylineno;
-			count++;
-		}
 	| FLOAT
-		{
-			symtab[count].token_num = token_count++;
-			strcpy(symtab[count].type, "keyword");
-			strcpy(symtab[count].symbol, "float");
-			strcpy(symtab[count].value, "-");
-			symtab[count].scope_num = scope_count;
-			symtab[count].line_num = yylineno;
-			count++;
-		}
 	| DOUBLE
-		{
-			symtab[count].token_num = token_count++;
-			strcpy(symtab[count].type, "keyword");
-			strcpy(symtab[count].symbol, "double");
-			strcpy(symtab[count].value, "-");
-			symtab[count].scope_num = scope_count;
-			symtab[count].line_num = yylineno;
-			count++;
-		}
 	| UNSIGNED INT
 	| UNSIGNED SHORT INT
 	| UNSIGNED LONG INT
@@ -270,23 +162,11 @@ simple_declaration
 primary_expression
 	: IDENTIFIER
 		{
-			symtab[count].token_num = token_count++;
-			strcpy(symtab[count].type, "identifier");
-			strcpy(symtab[count].symbol, "-");
-			strcpy(symtab[count].value, "-");
-			symtab[count].scope_num = scope_count;
-			symtab[count].line_num = yylineno;
-			count++;
+			insert(token_count, "identfier", $1, "-", scope_count, yylineno, 1, 0);
 		}
 	| CONSTANT
 		{
-			symtab[count].token_num = token_count++;
-			strcpy(symtab[count].type, "constant");
-			strcpy(symtab[count].symbol, "-");
-			strcpy(symtab[count].value, "-");
-			symtab[count].scope_num = scope_count;
-			symtab[count].line_num = yylineno;
-			count++;
+			insert(token_count, "identfier", $1, "-", scope_count, yylineno, 1, 0);
 		}
 	;
 
@@ -303,38 +183,11 @@ statement
 
 expression_statement
 	: expression ';' 
-		{
-			symtab[count].token_num = token_count++;
-			strcpy(symtab[count].type, "punctuation");
-			strcpy(symtab[count].symbol, ";");
-			strcpy(symtab[count].value, "-");
-			symtab[count].scope_num = scope_count;
-			symtab[count].line_num = yylineno;
-			count++;
-		}
 	| ';' 
-		{
-			symtab[count].token_num = token_count++;
-			strcpy(symtab[count].type, "punctuation");
-			strcpy(symtab[count].symbol, ";");
-			strcpy(symtab[count].value, "-");
-			symtab[count].scope_num = scope_count;
-			symtab[count].line_num = yylineno;
-			count++;
-		}
 	;
 
 expression
-	: mutable '='
-		{
-			symtab[count].token_num = token_count++;
-			strcpy(symtab[count].type, "asgnop");
-			strcpy(symtab[count].symbol, "=");
-			strcpy(symtab[count].value, "-");
-			symtab[count].scope_num = scope_count;
-			symtab[count].line_num = yylineno;
-			count++;
-		} expression 
+	: mutable '=' expression 
 	| mutable SHORTHANDADD expression
 	| mutable SHORTHANDSUB expression
 	| mutable SHORTHANDMULT expression
@@ -381,12 +234,11 @@ break_statement
 continue_statement
 	: CONTINUE ';'
 	;
+
 return_statement
 	: RETURN ';' 
 	| RETURN expression ';'
 	;
-
-
 
 simple_expression 
 	: simple_expression OR and_expression 
@@ -415,25 +267,7 @@ sum_expression
 
 sumop
 	: '+'  
-		{
-			symtab[count].token_num = token_count++;
-			strcpy(symtab[count].type, "sumop");
-			strcpy(symtab[count].symbol, "+");
-			strcpy(symtab[count].value, "-");
-			symtab[count].scope_num = scope_count;
-			symtab[count].line_num = yylineno;
-			count++;
-		}
 	| '-'
-		{
-			symtab[count].token_num = token_count++;
-			strcpy(symtab[count].type, "sumop");
-			strcpy(symtab[count].symbol, "-");
-			strcpy(symtab[count].value, "-");
-			symtab[count].scope_num = scope_count;
-			symtab[count].line_num = yylineno;
-			count++;	
-		}
 	;
 
 logop
@@ -449,25 +283,7 @@ term
 
 mulop
 	: '*'
-		{
-			symtab[count].token_num = token_count++;
-			strcpy(symtab[count].type, "mulop");
-			strcpy(symtab[count].symbol, "*");
-			strcpy(symtab[count].value, "-");
-			symtab[count].scope_num = scope_count;
-			symtab[count].line_num = yylineno;
-			count++;
-		}
 	| '/'
-		{
-			symtab[count].token_num = token_count++;
-			strcpy(symtab[count].type, "mulop");
-			strcpy(symtab[count].symbol, "/");
-			strcpy(symtab[count].value, "-");
-			symtab[count].scope_num = scope_count;
-			symtab[count].line_num = yylineno;
-			count++;
-		}
 	;
 
 
@@ -485,13 +301,7 @@ factor
 immutable
 	: CONSTANT  
 		{
-			symtab[count].token_num = token_count++;
-			strcpy(symtab[count].type, "constant");
-			strcpy(symtab[count].symbol, "-");
-			strcpy(symtab[count].value, "-");
-			symtab[count].scope_num = scope_count;
-			symtab[count].line_num = yylineno;
-			count++;
+			insert(token_count, "identfier", $1, "-", scope_count, yylineno, 1, 0);
 		}
 	;
 
@@ -499,13 +309,7 @@ immutable
 mutable
 	: IDENTIFIER
 		{
-			symtab[count].token_num = token_count++;
-			strcpy(symtab[count].type, "identfier");
-			strcpy(symtab[count].symbol, "-");
-			strcpy(symtab[count].value, "-");
-			symtab[count].scope_num = scope_count;
-			symtab[count].line_num = yylineno;
-			count++;
+			insert(token_count, "identfier", $1, "-", scope_count, yylineno, 1, 0);
 		}
 	;
 
@@ -521,7 +325,73 @@ void main()
 
 void yyerror(char const *s)
 {
+	extern int yylineno;
+	printf("\nParse Failed\n");
+	printf("Error Line Number: %d %s", yylineno, s);
 	fflush(stdout);
+}
+
+//hash function
+int hash(char* str)
+{
+	int len = strlen(str);
+    int hash_value = 0;
+
+    for(int i=0; i<len; i++)
+    {
+    	hash_value = (hash_value * PRIME + str[i]) % MOD;
+    }
+
+    printf("Hashed result:%d\n",hash_value);
+
+    return hash_value;
+} 
+
+//insert function
+void insert(int tn, char t[], char s[], char v[], int ln, int sn, int token_count_flag, int scope_count_flag) 
+{
+    if(lookup(s) != NULL)
+        return;
+	int hashValue = hash(s);
+    struct node *temp = malloc(sizeof(struct node));
+
+    temp->token_num = tn++;
+	strcpy(temp->type, t);
+	strcpy(temp->symbol, s);
+	strcpy(temp->value, v);
+	temp->scope_num = sn;
+	temp->line_num = ln;
+	
+	if (symtab[hashValue] == NULL)
+	{
+		symtab[hashValue] = temp;
+	}
+    else
+	{
+		struct node* start = symtab[hashValue];
+		while (start->next != NULL)
+			start = start->next;
+		start->next = temp;
+	}
+    // temp->next = symtab[hashValue];
+    // symtab[hashValue] = temp;
+}
+
+struct node *lookup(const char *str) 
+{
+	int len = strlen(str);
+	int hashValue = hash(str);
+
+	//get node at hash value
+	struct node *temp = symtab[hashValue];
+
+	while(temp != NULL) 
+	{
+	    if(!strcmp(str, temp->symbol))
+	        return temp;
+	    temp = temp->next;
+	}
+	return NULL;
 }
 
 void printsymtab(void)
@@ -530,8 +400,8 @@ void printsymtab(void)
 	printf("Token No.\tType\tSymbol\tValue\tScope No.\tLine No.");
 	int i;
 	printf("\n");
-	for (i = 0;i < count;i++)
+	for (i = 0;i < MAX;i++)
 	{
-		printf("\n%d\t%s\t%s\t%s\t%d\t%d", symtab[i].token_num, symtab[i].type, symtab[i].symbol, symtab[i].value, symtab[i].scope_num, symtab[i].line_num);
+		printf("\n%d\t%s\t%s\t%s\t%d\t%d", symtab[i]->token_num, symtab[i]->type, symtab[i]->symbol, symtab[i]->value, symtab[i]->scope_num, symtab[i]->line_num);
 	}
 }
