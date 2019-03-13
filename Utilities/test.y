@@ -4,12 +4,15 @@
 	#include <stdlib.h>
 	#include "symnode.h"
 
-	struct scopeTable *symtab = (struct scopeTable*)malloc(sizeof(struct scopeTable));
-	symtab->num = 0;
-	symtab->outer = NULL;
+	//struct scopeTable *symtab = (struct scopeTable*)malloc(sizeof(struct scopeTable));
+	//symtab->num = 0;
+	//symtab->outer = NULL;
 
 	extern int yylineno;
 	extern char yytext[];
+
+	int yylex(void);
+	int yyerror(const char *s);
 %}
 
 %token IDENTIFIER CONSTANT 
@@ -24,6 +27,7 @@
 %token STATIC EXTERN REGISTER AUTO
 %token ARRTYPE
 %token HEADER
+
 %left '+' '-' 
 %left '*' '/'
 
@@ -32,14 +36,17 @@
 
 start_state
 	: HEADER start_state
-	| external_declaration				 
-	| start_state external_declaration
+	| translation_unit
+	;
+
+translation_unit
+	: external_declaration				 
+	| translation_unit external_declaration
 	;
 
 external_declaration
 	: function_definition 
-	| declaration  	
-	| statement 
+	| declaration
 	| record_declaration
 	;
 
@@ -50,40 +57,29 @@ function_definition
 	;
 
 params
-	: paramTypeList
-	|
+	: param_decl
+	| params ',' param_decl
 	;
 
-paramTypeList
-	: type_specifier paramIdList
-	| paramTypeList
+param_decl					
+	: scoped_type_specifier declarator
+	| scoped_type_specifier
 	;
 
-paramIdList
-	: paramId ',' type_specifier paramIdList 
-	| paramId
-	;
-
-paramId
-	: IDENTIFIER 
-		{
-			superAdd(token_count, "identifier", $1, "-", scope_count, yylineno, 1, 0);
-		}
-	;
 
 /*DECLARATIONS*/
 
 declarator
 	: IDENTIFIER
 		{
-			superAdd(token_count, "identifier", $1, "-", scope_count, yylineno, 1, 0);
+			//superAdd(token_count, "identifier", $1, "-", scope_count, yylineno, 1, 0);
 		}    
 	;
 
 declaration
-	: scoped_type_specifier ';' 
-	| scoped_type_specifier init_declarator_list ';' 
+	: scoped_type_specifier init_declarator_list ';' 
 	| STRUCT IDENTIFIER declarator ';'
+	| scoped_type_specifier ';' 
 	;
 
 init_declarator_list
@@ -93,7 +89,7 @@ init_declarator_list
 
 init_declarator
 	: declarator   
-	| declarator {printf("declarator\n");} '=' primary_expression 
+	| declarator '=' primary_expression 
 	| declarator '=' simple_expression 	
 	;
 
@@ -132,7 +128,7 @@ type_specifier
 	;
 
 record_declaration
-	: STRUCT IDENTIFIER '{' { addScope(); }simple_declaration '}' { delScope(); } ';'
+	: STRUCT IDENTIFIER '{' { /*addScope();*/ } simple_declaration '}' { /*delScope();*/ } ';'
 	;
 
 simple_declaration
@@ -140,14 +136,12 @@ simple_declaration
 	| simple_declaration type_specifier IDENTIFIER ';'
 	;
 
+
 primary_expression
-	: IDENTIFIER
-		{
-			superAdd(token_count, "identifier", $1, "-", scope_count, yylineno, 1, 0);
-		}
+	: declarator
 	| CONSTANT
 		{
-			superAdd(token_count, "identifier", $1, "-", scope_count, yylineno, 1, 0);
+			//superAdd(token_count, "identifier", $1, "-", scope_count, yylineno, 1, 0);
 		}
 	;
 
@@ -168,29 +162,29 @@ expression_statement
 	;
 
 expression
-	: mutable '=' expression 
-	| mutable SHORTHANDADD expression
-	| mutable SHORTHANDSUB expression
-	| mutable SHORTHANDMULT expression
-	| mutable SHORTHANDDIV expression
-	| mutable INCREMENT
-	| mutable DECREMENT
+	: declarator '=' expression 
+	| declarator SHORTHANDADD expression
+	| declarator SHORTHANDSUB expression
+	| declarator SHORTHANDMULT expression
+	| declarator SHORTHANDDIV expression
+	| declarator INCREMENT
+	| declarator DECREMENT
 	| simple_expression
 	;
 
 
 compound_statement
-	: '{' { addScope(); } '}' { delScope(); }
-	| '{' { addScope(); }block_scope_list '}' { delScope(); }
+	: '{' { /*addScope*/} '}' { /*delScope();*/ }
+	| '{' { /*addScope();*/ } block_scope_list '}' { /*delScope();*/ }
 	;
 
 block_scope_list
 	: block_item
-	| block_scope_list block_item
+	| block_item block_scope_list
 	;
 
 block_item
-	: declaration 
+	: declaration  
 	| statement 
 	;
 
@@ -232,7 +226,7 @@ and_expression
 	;
 
 unary_rel_expression
-	: NOT unary_expression
+	: NOT factor
 	| rel_expression 
 	;
 
@@ -258,8 +252,8 @@ logop
 
 
 term
-	: term mulop unary_expression 
-	| unary_expression
+	: term mulop factor 
+	| factor
 	;
 
 mulop
@@ -268,31 +262,11 @@ mulop
 	;
 
 
-unary_expression 
-	: factor
-	;
-
 factor
-	: immutable
-	| mutable
+	: primary_expression
 	| '(' simple_expression ')'
 	;
 
-
-immutable
-	: CONSTANT  
-		{
-			superAdd(token_count, "identifier", $1, "-", scope_count, yylineno, 1, 0);
-		}
-	;
-
-
-mutable
-	: IDENTIFIER
-		{
-			superAdd(token_count, "identifier", $1, "-", scope_count, yylineno, 1, 0);
-		}
-	;
 
 %%
 
@@ -304,10 +278,11 @@ void main()
 }
 
 
-void yyerror(char const *s)
+int yyerror(char const *s)
 {
 	extern int yylineno;
 	printf("\nParse Failed\n");
 	printf("Error Line Number: %d %s", yylineno, s);
 	fflush(stdout);
+	return 0;
 }
