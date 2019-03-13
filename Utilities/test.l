@@ -13,9 +13,11 @@ void show(void);
 void myerror(void);
 void comment(void);
 int check_type(void);
+void tokprint();
 %}
 
 %%
+"bye"			{ tokprint();}
 "/*"			{ comment(); }
 "//"[^\n]*      { /* consume //-single comment */ }
 
@@ -65,16 +67,16 @@ int check_type(void);
 "continue"  { show(); return(CONTINUE); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
 "return"    { show(); return(RETURN); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
 
-"struct" { show(); return(STRUCT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword");}
+"struct" { show(); yylval.idname = strdup(yytext); return(STRUCT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword");}
 
 "[]" { show(); return(ARRTYPE); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"symbol"); }
 
-[a-zA-Z_]([a-zA-Z_]|[0-9])*		{ show(); return(check_type()); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"identifier"); }
+[a-zA-Z_]([a-zA-Z_]|[0-9])*		{ show(); yylval.idname = strdup(yytext); return(IDENTIFIER); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"identifier"); }
 
-([0-9])*								{ show(); return(CONSTANT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"constant"); }
-([0-9])+([Ee][+-]?([0-9])+)				{ show(); return(CONSTANT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"constant"); }
-([0-9])*"."([0-9])+([Ee][+-]?([0-9])+)?	{ show(); return(CONSTANT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"constant"); }
-([0-9])+"."([0-9])*([Ee][+-]?([0-9])+)?	{ show(); return(CONSTANT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"constant"); }
+([0-9])*								{ show(); yylval.ival = atoi(yytext); return(CONSTANT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"constant"); }
+([0-9])+([Ee][+-]?([0-9])+)				{ show(); yylval.ival = atoi(yytext); return(CONSTANT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"constant"); }
+([0-9])*"."([0-9])+([Ee][+-]?([0-9])+)?	{ show(); yylval.ival = atoi(yytext); return(CONSTANT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"constant"); }
+([0-9])+"."([0-9])*([Ee][+-]?([0-9])+)?	{ show(); yylval.ival = atoi(yytext); return(CONSTANT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"constant"); }
 
 
 ";"			{ show(); return(';'); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"symbol"); }
@@ -100,14 +102,22 @@ int check_type(void);
 
 int yywrap(void)
 {
+	return 1;
+}
+
+void tokprint()
+{
 	FILE *fptr;
 	fptr = fopen("tokens.txt", "w+");
-	for (int i = 0;i < tok_count;i++)
-	{
-		fprintf(fptr, "<%s,%s>\n", toks[i].name, toks[i].type);
-	}
+	// for (int i = 0;i < tok_count;i++)
+	// {
+	// 	fprintf(fptr, "Hello");
+	// 	fclose(fptr);
+	// 	fprintf(fptr, "<%s,%s>\n", toks[i].name, toks[i].type);
+	// }
+	fprintf(fptr,"%s", toks[0].name);
 	fclose(fptr);
-	return 1;
+	puts(toks[0].name);
 }
 
 
@@ -146,9 +156,4 @@ void show(void)
 void myerror(void)
 {
 	printf("Error at Line Number: %d %s", yylineno, yytext);
-}
-
-int check_type(void)
-{
-	return IDENTIFIER;
 }

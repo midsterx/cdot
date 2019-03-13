@@ -4,29 +4,42 @@
 	#include <stdlib.h>
 	#include "symnode.h"
 
-	//struct scopeTable *symtab = (struct scopeTable*)malloc(sizeof(struct scopeTable));
-	//symtab->num = 0;
-	//symtab->outer = NULL;
+	struct scopeTable *symtab = NULL;
+	int succ = 0;
 
 	extern int yylineno;
 	extern char yytext[];
 
+	int gscope = 0;
 	int yylex(void);
 	int yyerror(const char *s);
 %}
 
-%token IDENTIFIER CONSTANT 
-%token TYPE_NAME
-%token CHAR INT LONG FLOAT DOUBLE VOID SHORT UNSIGNED SIGNED
+%union 
+{
+	int ival;
+	long int lival;
+	double dval;
+	float fval;
+	char* idname;
+}
+
+%token HEADER
 %token IF ELSE WHILE DO BREAK CONTINUE 
 %token RETURN
-%token RELOP AND OR NOT
 %token SHORTHANDADD SHORTHANDSUB SHORTHANDMULT SHORTHANDDIV 
 %token INCREMENT DECREMENT
-%token STRUCT
+
+%token <idname> IDENTIFIER 
+%token <ival> CONSTANT 
+%token TYPE_NAME
+%token CHAR INT LONG FLOAT DOUBLE VOID SHORT UNSIGNED SIGNED
+%token <idname> STRUCT
+%token RELOP AND OR NOT
 %token STATIC EXTERN REGISTER AUTO
 %token ARRTYPE
-%token HEADER
+%token '=' ';' ','
+%token '(' ')' '{' '}'
 
 %left '+' '-' 
 %left '*' '/'
@@ -36,7 +49,7 @@
 
 start_state
 	: HEADER start_state
-	| translation_unit
+	| translation_unit {gscope++; symtab = addScope(symtab,gscope);}
 	;
 
 translation_unit
@@ -72,13 +85,13 @@ param_decl
 declarator
 	: IDENTIFIER
 		{
-			//superAdd(token_count, "identifier", $1, "-", scope_count, yylineno, 1, 0);
+			superAdd(symtab, $1, 1, yylineno, "identifier", 0, 4);
 		}    
 	;
 
 declaration
 	: scoped_type_specifier init_declarator_list ';' 
-	| STRUCT IDENTIFIER declarator ';'
+	| STRUCT IDENTIFIER { superAdd(symtab, $2, 1, yylineno, $1, 0, 4);} declarator ';'
 	| scoped_type_specifier ';' 
 	;
 
@@ -128,12 +141,12 @@ type_specifier
 	;
 
 record_declaration
-	: STRUCT IDENTIFIER '{' { /*addScope();*/ } simple_declaration '}' { /*delScope();*/ } ';'
+	: STRUCT IDENTIFIER '{' { gscope++; symtab = addScope(symtab,gscope); } simple_declaration '}' { gscope--;/*delScope(symtab);*/ } ';'
 	;
 
 simple_declaration
-	: type_specifier IDENTIFIER ';'
-	| simple_declaration type_specifier IDENTIFIER ';'
+	: type_specifier IDENTIFIER { superAdd(symtab, $2, 1, yylineno, "identifier", 0, 4); }';'
+	| simple_declaration type_specifier IDENTIFIER { superAdd(symtab, $3, 1, yylineno, "identifier", 0, 4); }';'
 	;
 
 
@@ -141,7 +154,7 @@ primary_expression
 	: declarator
 	| CONSTANT
 		{
-			//superAdd(token_count, "identifier", $1, "-", scope_count, yylineno, 1, 0);
+			/*superAdd(symtab, $1, 1, yylineno, "constant", 0);*/
 		}
 	;
 
@@ -174,8 +187,8 @@ expression
 
 
 compound_statement
-	: '{' { /*addScope*/} '}' { /*delScope();*/ }
-	| '{' { /*addScope();*/ } block_scope_list '}' { /*delScope();*/ }
+	: '{' { gscope++; symtab = addScope(symtab,gscope); } '}' { gscope--;/*delScope(symtab);*/ }
+	| '{' { gscope++; symtab = addScope(symtab,gscope); } block_scope_list '}' { gscope--;/*delScope(symtab);*/ }
 	;
 
 block_scope_list
@@ -274,7 +287,7 @@ factor
 void main()
 {
 	yyparse();
-	// printsymtab();
+	printsymtab(symtab);
 }
 
 

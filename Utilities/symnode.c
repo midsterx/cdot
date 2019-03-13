@@ -67,19 +67,21 @@
 //     //symarr[hashValue] = temp;
 // }
 
-int addSym(struct scopeTable *head, char* givenSymbol, int lineno, char* givenType, char* data) // to add to symbol table (new stuff)
+int addSym(struct scopeTable *head, char* givenSymbol, int lineno, char* givenType, int givenValue, int str_req) // to add to symbol table (new stuff)
 {
 	int newIndex = head->num;
 	strcpy(head->symarr[newIndex].symbol, givenSymbol);
-	head->symarr[newIndex].line_num = lineno;
+	head->symarr[newIndex].first_line_num = lineno;
+	head->symarr[newIndex].last_line_num = lineno;
 	strcpy(head->symarr[newIndex].type, givenType);
-    strcpy(head->symarr[newIndex].value, data);
+    head->symarr[newIndex].value = givenValue;
+	head->symarr[newIndex].storage_req = str_req;
 	head->symarr[newIndex].valid = 1;
 	head->num++;
 	return 1;
 }
 
-int setVal(struct scopeTable *head, char *symbol, int lineno, char* data) // to set the value alone if symbol exists
+int setVal(struct scopeTable *head, char *symbol, int lineno, int givenValue, int str_req) // to set the value alone if symbol exists
 {
 	while(head!=NULL)
     {
@@ -87,7 +89,8 @@ int setVal(struct scopeTable *head, char *symbol, int lineno, char* data) // to 
         {
 			if(strcmp(head->symarr[i].symbol, symbol)==0)
             {
-                strcpy(head->symarr[i].value, data);
+                head->symarr[i].value = givenValue;
+				head->symarr[i].storage_req = str_req;
                 return 1;
 			}
 		}
@@ -96,7 +99,7 @@ int setVal(struct scopeTable *head, char *symbol, int lineno, char* data) // to 
 	return 0;	
 }
 
-int superAdd(struct scopeTable *head, char* givenSymbol, int add, int lineno, char* givenType, char* data)
+int superAdd(struct scopeTable *head, char* givenSymbol, int add, int lineno, char* givenType, int givenValue, int str_req)
 {  
 	int found = 0;
 	for(int i=0; i<head->num; i++)
@@ -104,24 +107,25 @@ int superAdd(struct scopeTable *head, char* givenSymbol, int add, int lineno, ch
 		if(strcmp(head->symarr[i].symbol, givenSymbol)==0)
         {
 			found = 1;
-			setVal(head, givenSymbol, lineno, data);
+			setVal(head, givenSymbol, lineno, givenValue, str_req);
 			return 1; 
 		}
 	}
 	if(found == 0 && add==1)
     {
-		return addSym(head, givenSymbol, lineno, givenType, data);
+		return addSym(head, givenSymbol, lineno, givenType, givenValue, str_req);
 	}
 	return 0;
 }
 
 
-struct scopeTable* addScope(struct scopeTable *head)
+struct scopeTable* addScope(struct scopeTable *head, int gs)
 {
 	struct scopeTable *temp = malloc(sizeof(struct scopeTable));
 	for(int i=0; i<MAX; i++)
     {
 		temp->symarr[i].valid = 0;
+		temp->symarr[i].scope_num = gs;
 	}
 	temp->num = 0;
 	temp->outer = head;
@@ -146,7 +150,7 @@ struct node getVal(struct scopeTable *head, char *symbol, int *succ, int lineno)
 			if(strcmp(head->symarr[i].symbol, symbol)==0)
             {
 				*succ = 1;
-				head->symarr[i].line_num = lineno;
+				head->symarr[i].last_line_num = lineno;
 				return head->symarr[i];
 			}
 		}
@@ -162,7 +166,7 @@ struct node getVal(struct scopeTable *head, char *symbol, int *succ, int lineno)
 int printsymtab(struct scopeTable *head)
 {
     printf("\n\nSYMBOL TABLE\n\n");
-    printf("Token No.\tType\tSymbol\tValue\tScope No.\tLine No.");
+    printf("Token\tType\tValue\tScope\tFLine\tLLine");
     printf("\n");
     while(head!=NULL)
     {
@@ -170,7 +174,7 @@ int printsymtab(struct scopeTable *head)
         {
             if(head->symarr[i].valid == 1)
             { 
-                printf("%s\n", head->symarr[i].symbol);
+                printf("%s\t%s\t%d\t%d\t%d\t%d\n", head->symarr[i].symbol, head->symarr[i].type, head->symarr[i].value, head->symarr[i].scope_num, head->symarr[i].first_line_num, head->symarr[i].last_line_num);
                 j++;
             }
         }
