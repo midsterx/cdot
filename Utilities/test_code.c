@@ -1,5 +1,11 @@
 #include <stdio.h>
 
+struct node
+{
+	int a ;
+	char b;
+};
+
 void fun(int x , char y)
 {
 	int a = 5, b =6 ;
@@ -11,6 +17,17 @@ void fun(int x , char y)
 		int b;
 		int c;
 	}while(a>0);
+
+	if(c > b)
+	{
+		a = (b&&c)||d ;
+	}
+
+	if(a!=0)
+	{
+		a+=1;
+	}
+
 	int d;
 	int y;
 	int z;

@@ -12,6 +12,7 @@ int tok_count = 0;
 void show(void);
 void myerror(void);
 void comment(void);
+int check_type(void);
 %}
 
 %%
@@ -120,7 +121,7 @@ void comment(void)
 			return;
 		prev = c;
 	}
-	error("unterminated comment");
+	//error("unterminated comment");
 }
 
 

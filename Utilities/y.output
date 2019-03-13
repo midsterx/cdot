@@ -1,0 +1,2333 @@
+Terminals unused in grammar
+
+   TYPE_NAME
+   ARRTYPE
+
+
+State 11 conflicts: 8 shift/reduce
+State 25 conflicts: 1 reduce/reduce
+State 87 conflicts: 1 shift/reduce
+State 98 conflicts: 1 shift/reduce
+State 99 conflicts: 1 shift/reduce
+State 109 conflicts: 2 reduce/reduce
+State 110 conflicts: 2 reduce/reduce
+State 157 conflicts: 1 shift/reduce
+State 158 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: start_state $end
+
+    1 start_state: HEADER start_state
+    2            | translation_unit
+
+    3 translation_unit: external_declaration
+    4                 | translation_unit external_declaration
+
+    5 external_declaration: function_definition
+    6                     | declaration
+    7                     | record_declaration
+
+    8 function_definition: return_type_specifier declarator '(' params ')' compound_statement
+    9                    | declarator '(' params ')' compound_statement
+   10                    | return_type_specifier declarator compound_statement
+   11                    | declarator compound_statement
+
+   12 params: param_decl
+   13       | params ',' param_decl
+
+   14 param_decl: scoped_type_specifier declarator
+   15           | scoped_type_specifier
+
+   16 declarator: IDENTIFIER
+
+   17 declaration: scoped_type_specifier init_declarator_list ';'
+   18            | STRUCT IDENTIFIER declarator ';'
+   19            | scoped_type_specifier ';'
+
+   20 init_declarator_list: init_declarator
+   21                     | init_declarator_list ',' init_declarator
+
+   22 init_declarator: declarator
+   23                | declarator '=' primary_expression
+   24                | declarator '=' simple_expression
+
+   25 return_type_specifier: STATIC type_specifier
+   26                      | type_specifier
+
+   27 scoped_type_specifier: storage_class type_specifier
+   28                      | type_specifier
+
+   29 storage_class: STATIC
+   30              | EXTERN
+   31              | REGISTER
+   32              | AUTO
+
+   33 type_specifier: VOID
+   34               | CHAR
+   35               | INT
+   36               | LONG
+   37               | FLOAT
+   38               | DOUBLE
+   39               | UNSIGNED INT
+   40               | UNSIGNED SHORT INT
+   41               | UNSIGNED LONG INT
+   42               | UNSIGNED LONG LONG INT
+   43               | SIGNED INT
+   44               | SIGNED SHORT INT
+   45               | SIGNED LONG INT
+   46               | SIGNED LONG LONG INT
+
+   47 $@1: %empty
+
+   48 $@2: %empty
+
+   49 record_declaration: STRUCT IDENTIFIER '{' $@1 simple_declaration '}' $@2 ';'
+
+   50 simple_declaration: type_specifier IDENTIFIER ';'
+   51                   | simple_declaration type_specifier IDENTIFIER ';'
+
+   52 primary_expression: IDENTIFIER
+   53                   | CONSTANT
+
+   54 statement: expression_statement
+   55          | compound_statement
+   56          | conditional_statement
+   57          | iteration_statement
+   58          | break_statement
+   59          | continue_statement
+   60          | return_statement
+   61          | statement ';' statement
+
+   62 expression_statement: expression ';'
+   63                     | ';'
+
+   64 expression: mutable '=' expression
+   65           | mutable SHORTHANDADD expression
+   66           | mutable SHORTHANDSUB expression
+   67           | mutable SHORTHANDMULT expression
+   68           | mutable SHORTHANDDIV expression
+   69           | mutable INCREMENT
+   70           | mutable DECREMENT
+   71           | simple_expression
+
+   72 $@3: %empty
+
+   73 compound_statement: '{' $@3 '}'
+
+   74 $@4: %empty
+
+   75 compound_statement: '{' $@4 block_scope_list '}'
+
+   76 block_scope_list: block_item
+   77                 | block_scope_list block_item
+
+   78 block_item: declaration
+   79           | statement
+
+   80 conditional_statement: IF '(' condition ')' compound_statement
+   81                      | IF '(' condition ')' compound_statement ELSE compound_statement
+
+   82 condition: expression logop expression
+   83          | expression
+
+   84 iteration_statement: DO compound_statement WHILE '(' condition ')' ';'
+
+   85 break_statement: BREAK ';'
+
+   86 continue_statement: CONTINUE ';'
+
+   87 return_statement: RETURN ';'
+   88                 | RETURN expression ';'
+
+   89 simple_expression: simple_expression OR and_expression
+   90                  | and_expression
+
+   91 and_expression: and_expression AND unary_rel_expression
+   92               | unary_rel_expression
+
+   93 unary_rel_expression: NOT unary_expression
+   94                     | rel_expression
+
+   95 rel_expression: sum_expression
+   96               | sum_expression RELOP sum_expression
+
+   97 sum_expression: sum_expression sumop term
+   98               | term
+
+   99 sumop: '+'
+  100      | '-'
+
+  101 logop: OR
+  102      | AND
+
+  103 term: term mulop unary_expression
+  104     | unary_expression
+
+  105 mulop: '*'
+  106      | '/'
+
+  107 unary_expression: factor
+
+  108 factor: immutable
+  109       | mutable
+  110       | '(' simple_expression ')'
+
+  111 immutable: CONSTANT
+
+  112 mutable: IDENTIFIER
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'(' (40) 8 9 80 81 84 110
+')' (41) 8 9 80 81 84 110
+'*' (42) 105
+'+' (43) 99
+',' (44) 13 21
+'-' (45) 100
+'/' (47) 106
+';' (59) 17 18 19 49 50 51 61 62 63 84 85 86 87 88
+'=' (61) 23 24 64
+'{' (123) 49 73 75
+'}' (125) 49 73 75
+error (256)
+IDENTIFIER (258) 16 18 49 50 51 52 112
+CONSTANT (259) 53 111
+TYPE_NAME (260)
+CHAR (261) 34
+INT (262) 35 39 40 41 42 43 44 45 46
+LONG (263) 36 41 42 45 46
+FLOAT (264) 37
+DOUBLE (265) 38
+VOID (266) 33
+SHORT (267) 40 44
+UNSIGNED (268) 39 40 41 42
+SIGNED (269) 43 44 45 46
+IF (270) 80 81
+ELSE (271) 81
+WHILE (272) 84
+DO (273) 84
+BREAK (274) 85
+CONTINUE (275) 86
+RETURN (276) 87 88
+RELOP (277) 96
+AND (278) 91 102
+OR (279) 89 101
+NOT (280) 93
+SHORTHANDADD (281) 65
+SHORTHANDSUB (282) 66
+SHORTHANDMULT (283) 67
+SHORTHANDDIV (284) 68
+INCREMENT (285) 69
+DECREMENT (286) 70
+STRUCT (287) 18 49
+STATIC (288) 25 29
+EXTERN (289) 30
+REGISTER (290) 31
+AUTO (291) 32
+ARRTYPE (292)
+HEADER (293) 1
+
+
+Nonterminals, with rules where they appear
+
+$accept (50)
+    on left: 0
+start_state (51)
+    on left: 1 2, on right: 0 1
+translation_unit (52)
+    on left: 3 4, on right: 2 4
+external_declaration (53)
+    on left: 5 6 7, on right: 3 4
+function_definition (54)
+    on left: 8 9 10 11, on right: 5
+params (55)
+    on left: 12 13, on right: 8 9 13
+param_decl (56)
+    on left: 14 15, on right: 12 13
+declarator (57)
+    on left: 16, on right: 8 9 10 11 14 18 22 23 24
+declaration (58)
+    on left: 17 18 19, on right: 6 78
+init_declarator_list (59)
+    on left: 20 21, on right: 17 21
+init_declarator (60)
+    on left: 22 23 24, on right: 20 21
+return_type_specifier (61)
+    on left: 25 26, on right: 8 10
+scoped_type_specifier (62)
+    on left: 27 28, on right: 14 15 17 19
+storage_class (63)
+    on left: 29 30 31 32, on right: 27
+type_specifier (64)
+    on left: 33 34 35 36 37 38 39 40 41 42 43 44 45 46, on right: 25
+    26 27 28 50 51
+record_declaration (65)
+    on left: 49, on right: 7
+$@1 (66)
+    on left: 47, on right: 49
+$@2 (67)
+    on left: 48, on right: 49
+simple_declaration (68)
+    on left: 50 51, on right: 49 51
+primary_expression (69)
+    on left: 52 53, on right: 23
+statement (70)
+    on left: 54 55 56 57 58 59 60 61, on right: 61 79
+expression_statement (71)
+    on left: 62 63, on right: 54
+expression (72)
+    on left: 64 65 66 67 68 69 70 71, on right: 62 64 65 66 67 68 82
+    83 88
+compound_statement (73)
+    on left: 73 75, on right: 8 9 10 11 55 80 81 84
+$@3 (74)
+    on left: 72, on right: 73
+$@4 (75)
+    on left: 74, on right: 75
+block_scope_list (76)
+    on left: 76 77, on right: 75 77
+block_item (77)
+    on left: 78 79, on right: 76 77
+conditional_statement (78)
+    on left: 80 81, on right: 56
+condition (79)
+    on left: 82 83, on right: 80 81 84
+iteration_statement (80)
+    on left: 84, on right: 57
+break_statement (81)
+    on left: 85, on right: 58
+continue_statement (82)
+    on left: 86, on right: 59
+return_statement (83)
+    on left: 87 88, on right: 60
+simple_expression (84)
+    on left: 89 90, on right: 24 71 89 110
+and_expression (85)
+    on left: 91 92, on right: 89 90 91
+unary_rel_expression (86)
+    on left: 93 94, on right: 91 92
+rel_expression (87)
+    on left: 95 96, on right: 94
+sum_expression (88)
+    on left: 97 98, on right: 95 96 97
+sumop (89)
+    on left: 99 100, on right: 97
+logop (90)
+    on left: 101 102, on right: 82
+term (91)
+    on left: 103 104, on right: 97 98 103
+mulop (92)
+    on left: 105 106, on right: 103
+unary_expression (93)
+    on left: 107, on right: 93 103 104
+factor (94)
+    on left: 108 109 110, on right: 107
+immutable (95)
+    on left: 111, on right: 108
+mutable (96)
+    on left: 112, on right: 64 65 66 67 68 69 70 109
+
+
+State 0
+
+    0 $accept: . start_state $end
+
+    IDENTIFIER  shift, and go to state 1
+    CHAR        shift, and go to state 2
+    INT         shift, and go to state 3
+    LONG        shift, and go to state 4
+    FLOAT       shift, and go to state 5
+    DOUBLE      shift, and go to state 6
+    VOID        shift, and go to state 7
+    UNSIGNED    shift, and go to state 8
+    SIGNED      shift, and go to state 9
+    STRUCT      shift, and go to state 10
+    STATIC      shift, and go to state 11
+    EXTERN      shift, and go to state 12
+    REGISTER    shift, and go to state 13
+    AUTO        shift, and go to state 14
+    HEADER      shift, and go to state 15
+
+    start_state            go to state 16
+    translation_unit       go to state 17
+    external_declaration   go to state 18
+    function_definition    go to state 19
+    declarator             go to state 20
+    declaration            go to state 21
+    return_type_specifier  go to state 22
+    scoped_type_specifier  go to state 23
+    storage_class          go to state 24
+    type_specifier         go to state 25
+    record_declaration     go to state 26
+
+
+State 1
+
+   16 declarator: IDENTIFIER .
+
+    $default  reduce using rule 16 (declarator)
+
+
+State 2
+
+   34 type_specifier: CHAR .
+
+    $default  reduce using rule 34 (type_specifier)
+
+
+State 3
+
+   35 type_specifier: INT .
+
+    $default  reduce using rule 35 (type_specifier)
+
+
+State 4
+
+   36 type_specifier: LONG .
+
+    $default  reduce using rule 36 (type_specifier)
+
+
+State 5
+
+   37 type_specifier: FLOAT .
+
+    $default  reduce using rule 37 (type_specifier)
+
+
+State 6
+
+   38 type_specifier: DOUBLE .
+
+    $default  reduce using rule 38 (type_specifier)
+
+
+State 7
+
+   33 type_specifier: VOID .
+
+    $default  reduce using rule 33 (type_specifier)
+
+
+State 8
+
+   39 type_specifier: UNSIGNED . INT
+   40               | UNSIGNED . SHORT INT
+   41               | UNSIGNED . LONG INT
+   42               | UNSIGNED . LONG LONG INT
+
+    INT    shift, and go to state 27
+    LONG   shift, and go to state 28
+    SHORT  shift, and go to state 29
+
+
+State 9
+
+   43 type_specifier: SIGNED . INT
+   44               | SIGNED . SHORT INT
+   45               | SIGNED . LONG INT
+   46               | SIGNED . LONG LONG INT
+
+    INT    shift, and go to state 30
+    LONG   shift, and go to state 31
+    SHORT  shift, and go to state 32
+
+
+State 10
+
+   18 declaration: STRUCT . IDENTIFIER declarator ';'
+   49 record_declaration: STRUCT . IDENTIFIER '{' $@1 simple_declaration '}' $@2 ';'
+
+    IDENTIFIER  shift, and go to state 33
+
+
+State 11
+
+   25 return_type_specifier: STATIC . type_specifier
+   29 storage_class: STATIC .
+
+    CHAR      shift, and go to state 2
+    INT       shift, and go to state 3
+    LONG      shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    DOUBLE    shift, and go to state 6
+    VOID      shift, and go to state 7
+    UNSIGNED  shift, and go to state 8
+    SIGNED    shift, and go to state 9
+
+    CHAR      [reduce using rule 29 (storage_class)]
+    INT       [reduce using rule 29 (storage_class)]
+    LONG      [reduce using rule 29 (storage_class)]
+    FLOAT     [reduce using rule 29 (storage_class)]
+    DOUBLE    [reduce using rule 29 (storage_class)]
+    VOID      [reduce using rule 29 (storage_class)]
+    UNSIGNED  [reduce using rule 29 (storage_class)]
+    SIGNED    [reduce using rule 29 (storage_class)]
+
+    type_specifier  go to state 34
+
+
+State 12
+
+   30 storage_class: EXTERN .
+
+    $default  reduce using rule 30 (storage_class)
+
+
+State 13
+
+   31 storage_class: REGISTER .
+
+    $default  reduce using rule 31 (storage_class)
+
+
+State 14
+
+   32 storage_class: AUTO .
+
+    $default  reduce using rule 32 (storage_class)
+
+
+State 15
+
+    1 start_state: HEADER . start_state
+
+    IDENTIFIER  shift, and go to state 1
+    CHAR        shift, and go to state 2
+    INT         shift, and go to state 3
+    LONG        shift, and go to state 4
+    FLOAT       shift, and go to state 5
+    DOUBLE      shift, and go to state 6
+    VOID        shift, and go to state 7
+    UNSIGNED    shift, and go to state 8
+    SIGNED      shift, and go to state 9
+    STRUCT      shift, and go to state 10
+    STATIC      shift, and go to state 11
+    EXTERN      shift, and go to state 12
+    REGISTER    shift, and go to state 13
+    AUTO        shift, and go to state 14
+    HEADER      shift, and go to state 15
+
+    start_state            go to state 35
+    translation_unit       go to state 17
+    external_declaration   go to state 18
+    function_definition    go to state 19
+    declarator             go to state 20
+    declaration            go to state 21
+    return_type_specifier  go to state 22
+    scoped_type_specifier  go to state 23
+    storage_class          go to state 24
+    type_specifier         go to state 25
+    record_declaration     go to state 26
+
+
+State 16
+
+    0 $accept: start_state . $end
+
+    $end  shift, and go to state 36
+
+
+State 17
+
+    2 start_state: translation_unit .
+    4 translation_unit: translation_unit . external_declaration
+
+    IDENTIFIER  shift, and go to state 1
+    CHAR        shift, and go to state 2
+    INT         shift, and go to state 3
+    LONG        shift, and go to state 4
+    FLOAT       shift, and go to state 5
+    DOUBLE      shift, and go to state 6
+    VOID        shift, and go to state 7
+    UNSIGNED    shift, and go to state 8
+    SIGNED      shift, and go to state 9
+    STRUCT      shift, and go to state 10
+    STATIC      shift, and go to state 11
+    EXTERN      shift, and go to state 12
+    REGISTER    shift, and go to state 13
+    AUTO        shift, and go to state 14
+
+    $default  reduce using rule 2 (start_state)
+
+    external_declaration   go to state 37
+    function_definition    go to state 19
+    declarator             go to state 20
+    declaration            go to state 21
+    return_type_specifier  go to state 22
+    scoped_type_specifier  go to state 23
+    storage_class          go to state 24
+    type_specifier         go to state 25
+    record_declaration     go to state 26
+
+
+State 18
+
+    3 translation_unit: external_declaration .
+
+    $default  reduce using rule 3 (translation_unit)
+
+
+State 19
+
+    5 external_declaration: function_definition .
+
+    $default  reduce using rule 5 (external_declaration)
+
+
+State 20
+
+    9 function_definition: declarator . '(' params ')' compound_statement
+   11                    | declarator . compound_statement
+
+    '('  shift, and go to state 38
+    '{'  shift, and go to state 39
+
+    compound_statement  go to state 40
+
+
+State 21
+
+    6 external_declaration: declaration .
+
+    $default  reduce using rule 6 (external_declaration)
+
+
+State 22
+
+    8 function_definition: return_type_specifier . declarator '(' params ')' compound_statement
+   10                    | return_type_specifier . declarator compound_statement
+
+    IDENTIFIER  shift, and go to state 1
+
+    declarator  go to state 41
+
+
+State 23
+
+   17 declaration: scoped_type_specifier . init_declarator_list ';'
+   19            | scoped_type_specifier . ';'
+
+    IDENTIFIER  shift, and go to state 1
+    ';'         shift, and go to state 42
+
+    declarator            go to state 43
+    init_declarator_list  go to state 44
+    init_declarator       go to state 45
+
+
+State 24
+
+   27 scoped_type_specifier: storage_class . type_specifier
+
+    CHAR      shift, and go to state 2
+    INT       shift, and go to state 3
+    LONG      shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    DOUBLE    shift, and go to state 6
+    VOID      shift, and go to state 7
+    UNSIGNED  shift, and go to state 8
+    SIGNED    shift, and go to state 9
+
+    type_specifier  go to state 46
+
+
+State 25
+
+   26 return_type_specifier: type_specifier .
+   28 scoped_type_specifier: type_specifier .
+
+    IDENTIFIER  reduce using rule 26 (return_type_specifier)
+    IDENTIFIER  [reduce using rule 28 (scoped_type_specifier)]
+    ';'         reduce using rule 28 (scoped_type_specifier)
+    $default    reduce using rule 26 (return_type_specifier)
+
+
+State 26
+
+    7 external_declaration: record_declaration .
+
+    $default  reduce using rule 7 (external_declaration)
+
+
+State 27
+
+   39 type_specifier: UNSIGNED INT .
+
+    $default  reduce using rule 39 (type_specifier)
+
+
+State 28
+
+   41 type_specifier: UNSIGNED LONG . INT
+   42               | UNSIGNED LONG . LONG INT
+
+    INT   shift, and go to state 47
+    LONG  shift, and go to state 48
+
+
+State 29
+
+   40 type_specifier: UNSIGNED SHORT . INT
+
+    INT  shift, and go to state 49
+
+
+State 30
+
+   43 type_specifier: SIGNED INT .
+
+    $default  reduce using rule 43 (type_specifier)
+
+
+State 31
+
+   45 type_specifier: SIGNED LONG . INT
+   46               | SIGNED LONG . LONG INT
+
+    INT   shift, and go to state 50
+    LONG  shift, and go to state 51
+
+
+State 32
+
+   44 type_specifier: SIGNED SHORT . INT
+
+    INT  shift, and go to state 52
+
+
+State 33
+
+   18 declaration: STRUCT IDENTIFIER . declarator ';'
+   49 record_declaration: STRUCT IDENTIFIER . '{' $@1 simple_declaration '}' $@2 ';'
+
+    IDENTIFIER  shift, and go to state 1
+    '{'         shift, and go to state 53
+
+    declarator  go to state 54
+
+
+State 34
+
+   25 return_type_specifier: STATIC type_specifier .
+
+    $default  reduce using rule 25 (return_type_specifier)
+
+
+State 35
+
+    1 start_state: HEADER start_state .
+
+    $default  reduce using rule 1 (start_state)
+
+
+State 36
+
+    0 $accept: start_state $end .
+
+    $default  accept
+
+
+State 37
+
+    4 translation_unit: translation_unit external_declaration .
+
+    $default  reduce using rule 4 (translation_unit)
+
+
+State 38
+
+    9 function_definition: declarator '(' . params ')' compound_statement
+
+    CHAR      shift, and go to state 2
+    INT       shift, and go to state 3
+    LONG      shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    DOUBLE    shift, and go to state 6
+    VOID      shift, and go to state 7
+    UNSIGNED  shift, and go to state 8
+    SIGNED    shift, and go to state 9
+    STATIC    shift, and go to state 55
+    EXTERN    shift, and go to state 12
+    REGISTER  shift, and go to state 13
+    AUTO      shift, and go to state 14
+
+    params                 go to state 56
+    param_decl             go to state 57
+    scoped_type_specifier  go to state 58
+    storage_class          go to state 24
+    type_specifier         go to state 59
+
+
+State 39
+
+   73 compound_statement: '{' . $@3 '}'
+   75                   | '{' . $@4 block_scope_list '}'
+
+    '}'       reduce using rule 72 ($@3)
+    $default  reduce using rule 74 ($@4)
+
+    $@3  go to state 60
+    $@4  go to state 61
+
+
+State 40
+
+   11 function_definition: declarator compound_statement .
+
+    $default  reduce using rule 11 (function_definition)
+
+
+State 41
+
+    8 function_definition: return_type_specifier declarator . '(' params ')' compound_statement
+   10                    | return_type_specifier declarator . compound_statement
+
+    '('  shift, and go to state 62
+    '{'  shift, and go to state 39
+
+    compound_statement  go to state 63
+
+
+State 42
+
+   19 declaration: scoped_type_specifier ';' .
+
+    $default  reduce using rule 19 (declaration)
+
+
+State 43
+
+   22 init_declarator: declarator .
+   23                | declarator . '=' primary_expression
+   24                | declarator . '=' simple_expression
+
+    '='  shift, and go to state 64
+
+    $default  reduce using rule 22 (init_declarator)
+
+
+State 44
+
+   17 declaration: scoped_type_specifier init_declarator_list . ';'
+   21 init_declarator_list: init_declarator_list . ',' init_declarator
+
+    ','  shift, and go to state 65
+    ';'  shift, and go to state 66
+
+
+State 45
+
+   20 init_declarator_list: init_declarator .
+
+    $default  reduce using rule 20 (init_declarator_list)
+
+
+State 46
+
+   27 scoped_type_specifier: storage_class type_specifier .
+
+    $default  reduce using rule 27 (scoped_type_specifier)
+
+
+State 47
+
+   41 type_specifier: UNSIGNED LONG INT .
+
+    $default  reduce using rule 41 (type_specifier)
+
+
+State 48
+
+   42 type_specifier: UNSIGNED LONG LONG . INT
+
+    INT  shift, and go to state 67
+
+
+State 49
+
+   40 type_specifier: UNSIGNED SHORT INT .
+
+    $default  reduce using rule 40 (type_specifier)
+
+
+State 50
+
+   45 type_specifier: SIGNED LONG INT .
+
+    $default  reduce using rule 45 (type_specifier)
+
+
+State 51
+
+   46 type_specifier: SIGNED LONG LONG . INT
+
+    INT  shift, and go to state 68
+
+
+State 52
+
+   44 type_specifier: SIGNED SHORT INT .
+
+    $default  reduce using rule 44 (type_specifier)
+
+
+State 53
+
+   49 record_declaration: STRUCT IDENTIFIER '{' . $@1 simple_declaration '}' $@2 ';'
+
+    $default  reduce using rule 47 ($@1)
+
+    $@1  go to state 69
+
+
+State 54
+
+   18 declaration: STRUCT IDENTIFIER declarator . ';'
+
+    ';'  shift, and go to state 70
+
+
+State 55
+
+   29 storage_class: STATIC .
+
+    $default  reduce using rule 29 (storage_class)
+
+
+State 56
+
+    9 function_definition: declarator '(' params . ')' compound_statement
+   13 params: params . ',' param_decl
+
+    ')'  shift, and go to state 71
+    ','  shift, and go to state 72
+
+
+State 57
+
+   12 params: param_decl .
+
+    $default  reduce using rule 12 (params)
+
+
+State 58
+
+   14 param_decl: scoped_type_specifier . declarator
+   15           | scoped_type_specifier .
+
+    IDENTIFIER  shift, and go to state 1
+
+    $default  reduce using rule 15 (param_decl)
+
+    declarator  go to state 73
+
+
+State 59
+
+   28 scoped_type_specifier: type_specifier .
+
+    $default  reduce using rule 28 (scoped_type_specifier)
+
+
+State 60
+
+   73 compound_statement: '{' $@3 . '}'
+
+    '}'  shift, and go to state 74
+
+
+State 61
+
+   75 compound_statement: '{' $@4 . block_scope_list '}'
+
+    IDENTIFIER  shift, and go to state 75
+    CONSTANT    shift, and go to state 76
+    CHAR        shift, and go to state 2
+    INT         shift, and go to state 3
+    LONG        shift, and go to state 4
+    FLOAT       shift, and go to state 5
+    DOUBLE      shift, and go to state 6
+    VOID        shift, and go to state 7
+    UNSIGNED    shift, and go to state 8
+    SIGNED      shift, and go to state 9
+    IF          shift, and go to state 77
+    DO          shift, and go to state 78
+    BREAK       shift, and go to state 79
+    CONTINUE    shift, and go to state 80
+    RETURN      shift, and go to state 81
+    NOT         shift, and go to state 82
+    STRUCT      shift, and go to state 83
+    STATIC      shift, and go to state 55
+    EXTERN      shift, and go to state 12
+    REGISTER    shift, and go to state 13
+    AUTO        shift, and go to state 14
+    '('         shift, and go to state 84
+    ';'         shift, and go to state 85
+    '{'         shift, and go to state 39
+
+    declaration            go to state 86
+    scoped_type_specifier  go to state 23
+    storage_class          go to state 24
+    type_specifier         go to state 59
+    statement              go to state 87
+    expression_statement   go to state 88
+    expression             go to state 89
+    compound_statement     go to state 90
+    block_scope_list       go to state 91
+    block_item             go to state 92
+    conditional_statement  go to state 93
+    iteration_statement    go to state 94
+    break_statement        go to state 95
+    continue_statement     go to state 96
+    return_statement       go to state 97
+    simple_expression      go to state 98
+    and_expression         go to state 99
+    unary_rel_expression   go to state 100
+    rel_expression         go to state 101
+    sum_expression         go to state 102
+    term                   go to state 103
+    unary_expression       go to state 104
+    factor                 go to state 105
+    immutable              go to state 106
+    mutable                go to state 107
+
+
+State 62
+
+    8 function_definition: return_type_specifier declarator '(' . params ')' compound_statement
+
+    CHAR      shift, and go to state 2
+    INT       shift, and go to state 3
+    LONG      shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    DOUBLE    shift, and go to state 6
+    VOID      shift, and go to state 7
+    UNSIGNED  shift, and go to state 8
+    SIGNED    shift, and go to state 9
+    STATIC    shift, and go to state 55
+    EXTERN    shift, and go to state 12
+    REGISTER  shift, and go to state 13
+    AUTO      shift, and go to state 14
+
+    params                 go to state 108
+    param_decl             go to state 57
+    scoped_type_specifier  go to state 58
+    storage_class          go to state 24
+    type_specifier         go to state 59
+
+
+State 63
+
+   10 function_definition: return_type_specifier declarator compound_statement .
+
+    $default  reduce using rule 10 (function_definition)
+
+
+State 64
+
+   23 init_declarator: declarator '=' . primary_expression
+   24                | declarator '=' . simple_expression
+
+    IDENTIFIER  shift, and go to state 109
+    CONSTANT    shift, and go to state 110
+    NOT         shift, and go to state 82
+    '('         shift, and go to state 84
+
+    primary_expression    go to state 111
+    simple_expression     go to state 112
+    and_expression        go to state 99
+    unary_rel_expression  go to state 100
+    rel_expression        go to state 101
+    sum_expression        go to state 102
+    term                  go to state 103
+    unary_expression      go to state 104
+    factor                go to state 105
+    immutable             go to state 106
+    mutable               go to state 113
+
+
+State 65
+
+   21 init_declarator_list: init_declarator_list ',' . init_declarator
+
+    IDENTIFIER  shift, and go to state 1
+
+    declarator       go to state 43
+    init_declarator  go to state 114
+
+
+State 66
+
+   17 declaration: scoped_type_specifier init_declarator_list ';' .
+
+    $default  reduce using rule 17 (declaration)
+
+
+State 67
+
+   42 type_specifier: UNSIGNED LONG LONG INT .
+
+    $default  reduce using rule 42 (type_specifier)
+
+
+State 68
+
+   46 type_specifier: SIGNED LONG LONG INT .
+
+    $default  reduce using rule 46 (type_specifier)
+
+
+State 69
+
+   49 record_declaration: STRUCT IDENTIFIER '{' $@1 . simple_declaration '}' $@2 ';'
+
+    CHAR      shift, and go to state 2
+    INT       shift, and go to state 3
+    LONG      shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    DOUBLE    shift, and go to state 6
+    VOID      shift, and go to state 7
+    UNSIGNED  shift, and go to state 8
+    SIGNED    shift, and go to state 9
+
+    type_specifier      go to state 115
+    simple_declaration  go to state 116
+
+
+State 70
+
+   18 declaration: STRUCT IDENTIFIER declarator ';' .
+
+    $default  reduce using rule 18 (declaration)
+
+
+State 71
+
+    9 function_definition: declarator '(' params ')' . compound_statement
+
+    '{'  shift, and go to state 39
+
+    compound_statement  go to state 117
+
+
+State 72
+
+   13 params: params ',' . param_decl
+
+    CHAR      shift, and go to state 2
+    INT       shift, and go to state 3
+    LONG      shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    DOUBLE    shift, and go to state 6
+    VOID      shift, and go to state 7
+    UNSIGNED  shift, and go to state 8
+    SIGNED    shift, and go to state 9
+    STATIC    shift, and go to state 55
+    EXTERN    shift, and go to state 12
+    REGISTER  shift, and go to state 13
+    AUTO      shift, and go to state 14
+
+    param_decl             go to state 118
+    scoped_type_specifier  go to state 58
+    storage_class          go to state 24
+    type_specifier         go to state 59
+
+
+State 73
+
+   14 param_decl: scoped_type_specifier declarator .
+
+    $default  reduce using rule 14 (param_decl)
+
+
+State 74
+
+   73 compound_statement: '{' $@3 '}' .
+
+    $default  reduce using rule 73 (compound_statement)
+
+
+State 75
+
+  112 mutable: IDENTIFIER .
+
+    $default  reduce using rule 112 (mutable)
+
+
+State 76
+
+  111 immutable: CONSTANT .
+
+    $default  reduce using rule 111 (immutable)
+
+
+State 77
+
+   80 conditional_statement: IF . '(' condition ')' compound_statement
+   81                      | IF . '(' condition ')' compound_statement ELSE compound_statement
+
+    '('  shift, and go to state 119
+
+
+State 78
+
+   84 iteration_statement: DO . compound_statement WHILE '(' condition ')' ';'
+
+    '{'  shift, and go to state 39
+
+    compound_statement  go to state 120
+
+
+State 79
+
+   85 break_statement: BREAK . ';'
+
+    ';'  shift, and go to state 121
+
+
+State 80
+
+   86 continue_statement: CONTINUE . ';'
+
+    ';'  shift, and go to state 122
+
+
+State 81
+
+   87 return_statement: RETURN . ';'
+   88                 | RETURN . expression ';'
+
+    IDENTIFIER  shift, and go to state 75
+    CONSTANT    shift, and go to state 76
+    NOT         shift, and go to state 82
+    '('         shift, and go to state 84
+    ';'         shift, and go to state 123
+
+    expression            go to state 124
+    simple_expression     go to state 98
+    and_expression        go to state 99
+    unary_rel_expression  go to state 100
+    rel_expression        go to state 101
+    sum_expression        go to state 102
+    term                  go to state 103
+    unary_expression      go to state 104
+    factor                go to state 105
+    immutable             go to state 106
+    mutable               go to state 107
+
+
+State 82
+
+   93 unary_rel_expression: NOT . unary_expression
+
+    IDENTIFIER  shift, and go to state 75
+    CONSTANT    shift, and go to state 76
+    '('         shift, and go to state 84
+
+    unary_expression  go to state 125
+    factor            go to state 105
+    immutable         go to state 106
+    mutable           go to state 113
+
+
+State 83
+
+   18 declaration: STRUCT . IDENTIFIER declarator ';'
+
+    IDENTIFIER  shift, and go to state 126
+
+
+State 84
+
+  110 factor: '(' . simple_expression ')'
+
+    IDENTIFIER  shift, and go to state 75
+    CONSTANT    shift, and go to state 76
+    NOT         shift, and go to state 82
+    '('         shift, and go to state 84
+
+    simple_expression     go to state 127
+    and_expression        go to state 99
+    unary_rel_expression  go to state 100
+    rel_expression        go to state 101
+    sum_expression        go to state 102
+    term                  go to state 103
+    unary_expression      go to state 104
+    factor                go to state 105
+    immutable             go to state 106
+    mutable               go to state 113
+
+
+State 85
+
+   63 expression_statement: ';' .
+
+    $default  reduce using rule 63 (expression_statement)
+
+
+State 86
+
+   78 block_item: declaration .
+
+    $default  reduce using rule 78 (block_item)
+
+
+State 87
+
+   61 statement: statement . ';' statement
+   79 block_item: statement .
+
+    ';'  shift, and go to state 128
+
+    ';'       [reduce using rule 79 (block_item)]
+    $default  reduce using rule 79 (block_item)
+
+
+State 88
+
+   54 statement: expression_statement .
+
+    $default  reduce using rule 54 (statement)
+
+
+State 89
+
+   62 expression_statement: expression . ';'
+
+    ';'  shift, and go to state 129
+
+
+State 90
+
+   55 statement: compound_statement .
+
+    $default  reduce using rule 55 (statement)
+
+
+State 91
+
+   75 compound_statement: '{' $@4 block_scope_list . '}'
+   77 block_scope_list: block_scope_list . block_item
+
+    IDENTIFIER  shift, and go to state 75
+    CONSTANT    shift, and go to state 76
+    CHAR        shift, and go to state 2
+    INT         shift, and go to state 3
+    LONG        shift, and go to state 4
+    FLOAT       shift, and go to state 5
+    DOUBLE      shift, and go to state 6
+    VOID        shift, and go to state 7
+    UNSIGNED    shift, and go to state 8
+    SIGNED      shift, and go to state 9
+    IF          shift, and go to state 77
+    DO          shift, and go to state 78
+    BREAK       shift, and go to state 79
+    CONTINUE    shift, and go to state 80
+    RETURN      shift, and go to state 81
+    NOT         shift, and go to state 82
+    STRUCT      shift, and go to state 83
+    STATIC      shift, and go to state 55
+    EXTERN      shift, and go to state 12
+    REGISTER    shift, and go to state 13
+    AUTO        shift, and go to state 14
+    '('         shift, and go to state 84
+    ';'         shift, and go to state 85
+    '{'         shift, and go to state 39
+    '}'         shift, and go to state 130
+
+    declaration            go to state 86
+    scoped_type_specifier  go to state 23
+    storage_class          go to state 24
+    type_specifier         go to state 59
+    statement              go to state 87
+    expression_statement   go to state 88
+    expression             go to state 89
+    compound_statement     go to state 90
+    block_item             go to state 131
+    conditional_statement  go to state 93
+    iteration_statement    go to state 94
+    break_statement        go to state 95
+    continue_statement     go to state 96
+    return_statement       go to state 97
+    simple_expression      go to state 98
+    and_expression         go to state 99
+    unary_rel_expression   go to state 100
+    rel_expression         go to state 101
+    sum_expression         go to state 102
+    term                   go to state 103
+    unary_expression       go to state 104
+    factor                 go to state 105
+    immutable              go to state 106
+    mutable                go to state 107
+
+
+State 92
+
+   76 block_scope_list: block_item .
+
+    $default  reduce using rule 76 (block_scope_list)
+
+
+State 93
+
+   56 statement: conditional_statement .
+
+    $default  reduce using rule 56 (statement)
+
+
+State 94
+
+   57 statement: iteration_statement .
+
+    $default  reduce using rule 57 (statement)
+
+
+State 95
+
+   58 statement: break_statement .
+
+    $default  reduce using rule 58 (statement)
+
+
+State 96
+
+   59 statement: continue_statement .
+
+    $default  reduce using rule 59 (statement)
+
+
+State 97
+
+   60 statement: return_statement .
+
+    $default  reduce using rule 60 (statement)
+
+
+State 98
+
+   71 expression: simple_expression .
+   89 simple_expression: simple_expression . OR and_expression
+
+    OR  shift, and go to state 132
+
+    OR        [reduce using rule 71 (expression)]
+    $default  reduce using rule 71 (expression)
+
+
+State 99
+
+   90 simple_expression: and_expression .
+   91 and_expression: and_expression . AND unary_rel_expression
+
+    AND  shift, and go to state 133
+
+    AND       [reduce using rule 90 (simple_expression)]
+    $default  reduce using rule 90 (simple_expression)
+
+
+State 100
+
+   92 and_expression: unary_rel_expression .
+
+    $default  reduce using rule 92 (and_expression)
+
+
+State 101
+
+   94 unary_rel_expression: rel_expression .
+
+    $default  reduce using rule 94 (unary_rel_expression)
+
+
+State 102
+
+   95 rel_expression: sum_expression .
+   96               | sum_expression . RELOP sum_expression
+   97 sum_expression: sum_expression . sumop term
+
+    RELOP  shift, and go to state 134
+    '+'    shift, and go to state 135
+    '-'    shift, and go to state 136
+
+    $default  reduce using rule 95 (rel_expression)
+
+    sumop  go to state 137
+
+
+State 103
+
+   98 sum_expression: term .
+  103 term: term . mulop unary_expression
+
+    '*'  shift, and go to state 138
+    '/'  shift, and go to state 139
+
+    $default  reduce using rule 98 (sum_expression)
+
+    mulop  go to state 140
+
+
+State 104
+
+  104 term: unary_expression .
+
+    $default  reduce using rule 104 (term)
+
+
+State 105
+
+  107 unary_expression: factor .
+
+    $default  reduce using rule 107 (unary_expression)
+
+
+State 106
+
+  108 factor: immutable .
+
+    $default  reduce using rule 108 (factor)
+
+
+State 107
+
+   64 expression: mutable . '=' expression
+   65           | mutable . SHORTHANDADD expression
+   66           | mutable . SHORTHANDSUB expression
+   67           | mutable . SHORTHANDMULT expression
+   68           | mutable . SHORTHANDDIV expression
+   69           | mutable . INCREMENT
+   70           | mutable . DECREMENT
+  109 factor: mutable .
+
+    SHORTHANDADD   shift, and go to state 141
+    SHORTHANDSUB   shift, and go to state 142
+    SHORTHANDMULT  shift, and go to state 143
+    SHORTHANDDIV   shift, and go to state 144
+    INCREMENT      shift, and go to state 145
+    DECREMENT      shift, and go to state 146
+    '='            shift, and go to state 147
+
+    $default  reduce using rule 109 (factor)
+
+
+State 108
+
+    8 function_definition: return_type_specifier declarator '(' params . ')' compound_statement
+   13 params: params . ',' param_decl
+
+    ')'  shift, and go to state 148
+    ','  shift, and go to state 72
+
+
+State 109
+
+   52 primary_expression: IDENTIFIER .
+  112 mutable: IDENTIFIER .
+
+    ','       reduce using rule 52 (primary_expression)
+    ','       [reduce using rule 112 (mutable)]
+    ';'       reduce using rule 52 (primary_expression)
+    ';'       [reduce using rule 112 (mutable)]
+    $default  reduce using rule 112 (mutable)
+
+
+State 110
+
+   53 primary_expression: CONSTANT .
+  111 immutable: CONSTANT .
+
+    ','       reduce using rule 53 (primary_expression)
+    ','       [reduce using rule 111 (immutable)]
+    ';'       reduce using rule 53 (primary_expression)
+    ';'       [reduce using rule 111 (immutable)]
+    $default  reduce using rule 111 (immutable)
+
+
+State 111
+
+   23 init_declarator: declarator '=' primary_expression .
+
+    $default  reduce using rule 23 (init_declarator)
+
+
+State 112
+
+   24 init_declarator: declarator '=' simple_expression .
+   89 simple_expression: simple_expression . OR and_expression
+
+    OR  shift, and go to state 132
+
+    $default  reduce using rule 24 (init_declarator)
+
+
+State 113
+
+  109 factor: mutable .
+
+    $default  reduce using rule 109 (factor)
+
+
+State 114
+
+   21 init_declarator_list: init_declarator_list ',' init_declarator .
+
+    $default  reduce using rule 21 (init_declarator_list)
+
+
+State 115
+
+   50 simple_declaration: type_specifier . IDENTIFIER ';'
+
+    IDENTIFIER  shift, and go to state 149
+
+
+State 116
+
+   49 record_declaration: STRUCT IDENTIFIER '{' $@1 simple_declaration . '}' $@2 ';'
+   51 simple_declaration: simple_declaration . type_specifier IDENTIFIER ';'
+
+    CHAR      shift, and go to state 2
+    INT       shift, and go to state 3
+    LONG      shift, and go to state 4
+    FLOAT     shift, and go to state 5
+    DOUBLE    shift, and go to state 6
+    VOID      shift, and go to state 7
+    UNSIGNED  shift, and go to state 8
+    SIGNED    shift, and go to state 9
+    '}'       shift, and go to state 150
+
+    type_specifier  go to state 151
+
+
+State 117
+
+    9 function_definition: declarator '(' params ')' compound_statement .
+
+    $default  reduce using rule 9 (function_definition)
+
+
+State 118
+
+   13 params: params ',' param_decl .
+
+    $default  reduce using rule 13 (params)
+
+
+State 119
+
+   80 conditional_statement: IF '(' . condition ')' compound_statement
+   81                      | IF '(' . condition ')' compound_statement ELSE compound_statement
+
+    IDENTIFIER  shift, and go to state 75
+    CONSTANT    shift, and go to state 76
+    NOT         shift, and go to state 82
+    '('         shift, and go to state 84
+
+    expression            go to state 152
+    condition             go to state 153
+    simple_expression     go to state 98
+    and_expression        go to state 99
+    unary_rel_expression  go to state 100
+    rel_expression        go to state 101
+    sum_expression        go to state 102
+    term                  go to state 103
+    unary_expression      go to state 104
+    factor                go to state 105
+    immutable             go to state 106
+    mutable               go to state 107
+
+
+State 120
+
+   84 iteration_statement: DO compound_statement . WHILE '(' condition ')' ';'
+
+    WHILE  shift, and go to state 154
+
+
+State 121
+
+   85 break_statement: BREAK ';' .
+
+    $default  reduce using rule 85 (break_statement)
+
+
+State 122
+
+   86 continue_statement: CONTINUE ';' .
+
+    $default  reduce using rule 86 (continue_statement)
+
+
+State 123
+
+   87 return_statement: RETURN ';' .
+
+    $default  reduce using rule 87 (return_statement)
+
+
+State 124
+
+   88 return_statement: RETURN expression . ';'
+
+    ';'  shift, and go to state 155
+
+
+State 125
+
+   93 unary_rel_expression: NOT unary_expression .
+
+    $default  reduce using rule 93 (unary_rel_expression)
+
+
+State 126
+
+   18 declaration: STRUCT IDENTIFIER . declarator ';'
+
+    IDENTIFIER  shift, and go to state 1
+
+    declarator  go to state 54
+
+
+State 127
+
+   89 simple_expression: simple_expression . OR and_expression
+  110 factor: '(' simple_expression . ')'
+
+    OR   shift, and go to state 132
+    ')'  shift, and go to state 156
+
+
+State 128
+
+   61 statement: statement ';' . statement
+
+    IDENTIFIER  shift, and go to state 75
+    CONSTANT    shift, and go to state 76
+    IF          shift, and go to state 77
+    DO          shift, and go to state 78
+    BREAK       shift, and go to state 79
+    CONTINUE    shift, and go to state 80
+    RETURN      shift, and go to state 81
+    NOT         shift, and go to state 82
+    '('         shift, and go to state 84
+    ';'         shift, and go to state 85
+    '{'         shift, and go to state 39
+
+    statement              go to state 157
+    expression_statement   go to state 88
+    expression             go to state 89
+    compound_statement     go to state 90
+    conditional_statement  go to state 93
+    iteration_statement    go to state 94
+    break_statement        go to state 95
+    continue_statement     go to state 96
+    return_statement       go to state 97
+    simple_expression      go to state 98
+    and_expression         go to state 99
+    unary_rel_expression   go to state 100
+    rel_expression         go to state 101
+    sum_expression         go to state 102
+    term                   go to state 103
+    unary_expression       go to state 104
+    factor                 go to state 105
+    immutable              go to state 106
+    mutable                go to state 107
+
+
+State 129
+
+   62 expression_statement: expression ';' .
+
+    $default  reduce using rule 62 (expression_statement)
+
+
+State 130
+
+   75 compound_statement: '{' $@4 block_scope_list '}' .
+
+    $default  reduce using rule 75 (compound_statement)
+
+
+State 131
+
+   77 block_scope_list: block_scope_list block_item .
+
+    $default  reduce using rule 77 (block_scope_list)
+
+
+State 132
+
+   89 simple_expression: simple_expression OR . and_expression
+
+    IDENTIFIER  shift, and go to state 75
+    CONSTANT    shift, and go to state 76
+    NOT         shift, and go to state 82
+    '('         shift, and go to state 84
+
+    and_expression        go to state 158
+    unary_rel_expression  go to state 100
+    rel_expression        go to state 101
+    sum_expression        go to state 102
+    term                  go to state 103
+    unary_expression      go to state 104
+    factor                go to state 105
+    immutable             go to state 106
+    mutable               go to state 113
+
+
+State 133
+
+   91 and_expression: and_expression AND . unary_rel_expression
+
+    IDENTIFIER  shift, and go to state 75
+    CONSTANT    shift, and go to state 76
+    NOT         shift, and go to state 82
+    '('         shift, and go to state 84
+
+    unary_rel_expression  go to state 159
+    rel_expression        go to state 101
+    sum_expression        go to state 102
+    term                  go to state 103
+    unary_expression      go to state 104
+    factor                go to state 105
+    immutable             go to state 106
+    mutable               go to state 113
+
+
+State 134
+
+   96 rel_expression: sum_expression RELOP . sum_expression
+
+    IDENTIFIER  shift, and go to state 75
+    CONSTANT    shift, and go to state 76
+    '('         shift, and go to state 84
+
+    sum_expression    go to state 160
+    term              go to state 103
+    unary_expression  go to state 104
+    factor            go to state 105
+    immutable         go to state 106
+    mutable           go to state 113
+
+
+State 135
+
+   99 sumop: '+' .
+
+    $default  reduce using rule 99 (sumop)
+
+
+State 136
+
+  100 sumop: '-' .
+
+    $default  reduce using rule 100 (sumop)
+
+
+State 137
+
+   97 sum_expression: sum_expression sumop . term
+
+    IDENTIFIER  shift, and go to state 75
+    CONSTANT    shift, and go to state 76
+    '('         shift, and go to state 84
+
+    term              go to state 161
+    unary_expression  go to state 104
+    factor            go to state 105
+    immutable         go to state 106
+    mutable           go to state 113
+
+
+State 138
+
+  105 mulop: '*' .
+
+    $default  reduce using rule 105 (mulop)
+
+
+State 139
+
+  106 mulop: '/' .
+
+    $default  reduce using rule 106 (mulop)
+
+
+State 140
+
+  103 term: term mulop . unary_expression
+
+    IDENTIFIER  shift, and go to state 75
+    CONSTANT    shift, and go to state 76
+    '('         shift, and go to state 84
+
+    unary_expression  go to state 162
+    factor            go to state 105
+    immutable         go to state 106
+    mutable           go to state 113
+
+
+State 141
+
+   65 expression: mutable SHORTHANDADD . expression
+
+    IDENTIFIER  shift, and go to state 75
+    CONSTANT    shift, and go to state 76
+    NOT         shift, and go to state 82
+    '('         shift, and go to state 84
+
+    expression            go to state 163
+    simple_expression     go to state 98
+    and_expression        go to state 99
+    unary_rel_expression  go to state 100
+    rel_expression        go to state 101
+    sum_expression        go to state 102
+    term                  go to state 103
+    unary_expression      go to state 104
+    factor                go to state 105
+    immutable             go to state 106
+    mutable               go to state 107
+
+
+State 142
+
+   66 expression: mutable SHORTHANDSUB . expression
+
+    IDENTIFIER  shift, and go to state 75
+    CONSTANT    shift, and go to state 76
+    NOT         shift, and go to state 82
+    '('         shift, and go to state 84
+
+    expression            go to state 164
+    simple_expression     go to state 98
+    and_expression        go to state 99
+    unary_rel_expression  go to state 100
+    rel_expression        go to state 101
+    sum_expression        go to state 102
+    term                  go to state 103
+    unary_expression      go to state 104
+    factor                go to state 105
+    immutable             go to state 106
+    mutable               go to state 107
+
+
+State 143
+
+   67 expression: mutable SHORTHANDMULT . expression
+
+    IDENTIFIER  shift, and go to state 75
+    CONSTANT    shift, and go to state 76
+    NOT         shift, and go to state 82
+    '('         shift, and go to state 84
+
+    expression            go to state 165
+    simple_expression     go to state 98
+    and_expression        go to state 99
+    unary_rel_expression  go to state 100
+    rel_expression        go to state 101
+    sum_expression        go to state 102
+    term                  go to state 103
+    unary_expression      go to state 104
+    factor                go to state 105
+    immutable             go to state 106
+    mutable               go to state 107
+
+
+State 144
+
+   68 expression: mutable SHORTHANDDIV . expression
+
+    IDENTIFIER  shift, and go to state 75
+    CONSTANT    shift, and go to state 76
+    NOT         shift, and go to state 82
+    '('         shift, and go to state 84
+
+    expression            go to state 166
+    simple_expression     go to state 98
+    and_expression        go to state 99
+    unary_rel_expression  go to state 100
+    rel_expression        go to state 101
+    sum_expression        go to state 102
+    term                  go to state 103
+    unary_expression      go to state 104
+    factor                go to state 105
+    immutable             go to state 106
+    mutable               go to state 107
+
+
+State 145
+
+   69 expression: mutable INCREMENT .
+
+    $default  reduce using rule 69 (expression)
+
+
+State 146
+
+   70 expression: mutable DECREMENT .
+
+    $default  reduce using rule 70 (expression)
+
+
+State 147
+
+   64 expression: mutable '=' . expression
+
+    IDENTIFIER  shift, and go to state 75
+    CONSTANT    shift, and go to state 76
+    NOT         shift, and go to state 82
+    '('         shift, and go to state 84
+
+    expression            go to state 167
+    simple_expression     go to state 98
+    and_expression        go to state 99
+    unary_rel_expression  go to state 100
+    rel_expression        go to state 101
+    sum_expression        go to state 102
+    term                  go to state 103
+    unary_expression      go to state 104
+    factor                go to state 105
+    immutable             go to state 106
+    mutable               go to state 107
+
+
+State 148
+
+    8 function_definition: return_type_specifier declarator '(' params ')' . compound_statement
+
+    '{'  shift, and go to state 39
+
+    compound_statement  go to state 168
+
+
+State 149
+
+   50 simple_declaration: type_specifier IDENTIFIER . ';'
+
+    ';'  shift, and go to state 169
+
+
+State 150
+
+   49 record_declaration: STRUCT IDENTIFIER '{' $@1 simple_declaration '}' . $@2 ';'
+
+    $default  reduce using rule 48 ($@2)
+
+    $@2  go to state 170
+
+
+State 151
+
+   51 simple_declaration: simple_declaration type_specifier . IDENTIFIER ';'
+
+    IDENTIFIER  shift, and go to state 171
+
+
+State 152
+
+   82 condition: expression . logop expression
+   83          | expression .
+
+    AND  shift, and go to state 172
+    OR   shift, and go to state 173
+
+    $default  reduce using rule 83 (condition)
+
+    logop  go to state 174
+
+
+State 153
+
+   80 conditional_statement: IF '(' condition . ')' compound_statement
+   81                      | IF '(' condition . ')' compound_statement ELSE compound_statement
+
+    ')'  shift, and go to state 175
+
+
+State 154
+
+   84 iteration_statement: DO compound_statement WHILE . '(' condition ')' ';'
+
+    '('  shift, and go to state 176
+
+
+State 155
+
+   88 return_statement: RETURN expression ';' .
+
+    $default  reduce using rule 88 (return_statement)
+
+
+State 156
+
+  110 factor: '(' simple_expression ')' .
+
+    $default  reduce using rule 110 (factor)
+
+
+State 157
+
+   61 statement: statement . ';' statement
+   61          | statement ';' statement .
+
+    ';'  shift, and go to state 128
+
+    ';'       [reduce using rule 61 (statement)]
+    $default  reduce using rule 61 (statement)
+
+
+State 158
+
+   89 simple_expression: simple_expression OR and_expression .
+   91 and_expression: and_expression . AND unary_rel_expression
+
+    AND  shift, and go to state 133
+
+    AND       [reduce using rule 89 (simple_expression)]
+    $default  reduce using rule 89 (simple_expression)
+
+
+State 159
+
+   91 and_expression: and_expression AND unary_rel_expression .
+
+    $default  reduce using rule 91 (and_expression)
+
+
+State 160
+
+   96 rel_expression: sum_expression RELOP sum_expression .
+   97 sum_expression: sum_expression . sumop term
+
+    '+'  shift, and go to state 135
+    '-'  shift, and go to state 136
+
+    $default  reduce using rule 96 (rel_expression)
+
+    sumop  go to state 137
+
+
+State 161
+
+   97 sum_expression: sum_expression sumop term .
+  103 term: term . mulop unary_expression
+
+    '*'  shift, and go to state 138
+    '/'  shift, and go to state 139
+
+    $default  reduce using rule 97 (sum_expression)
+
+    mulop  go to state 140
+
+
+State 162
+
+  103 term: term mulop unary_expression .
+
+    $default  reduce using rule 103 (term)
+
+
+State 163
+
+   65 expression: mutable SHORTHANDADD expression .
+
+    $default  reduce using rule 65 (expression)
+
+
+State 164
+
+   66 expression: mutable SHORTHANDSUB expression .
+
+    $default  reduce using rule 66 (expression)
+
+
+State 165
+
+   67 expression: mutable SHORTHANDMULT expression .
+
+    $default  reduce using rule 67 (expression)
+
+
+State 166
+
+   68 expression: mutable SHORTHANDDIV expression .
+
+    $default  reduce using rule 68 (expression)
+
+
+State 167
+
+   64 expression: mutable '=' expression .
+
+    $default  reduce using rule 64 (expression)
+
+
+State 168
+
+    8 function_definition: return_type_specifier declarator '(' params ')' compound_statement .
+
+    $default  reduce using rule 8 (function_definition)
+
+
+State 169
+
+   50 simple_declaration: type_specifier IDENTIFIER ';' .
+
+    $default  reduce using rule 50 (simple_declaration)
+
+
+State 170
+
+   49 record_declaration: STRUCT IDENTIFIER '{' $@1 simple_declaration '}' $@2 . ';'
+
+    ';'  shift, and go to state 177
+
+
+State 171
+
+   51 simple_declaration: simple_declaration type_specifier IDENTIFIER . ';'
+
+    ';'  shift, and go to state 178
+
+
+State 172
+
+  102 logop: AND .
+
+    $default  reduce using rule 102 (logop)
+
+
+State 173
+
+  101 logop: OR .
+
+    $default  reduce using rule 101 (logop)
+
+
+State 174
+
+   82 condition: expression logop . expression
+
+    IDENTIFIER  shift, and go to state 75
+    CONSTANT    shift, and go to state 76
+    NOT         shift, and go to state 82
+    '('         shift, and go to state 84
+
+    expression            go to state 179
+    simple_expression     go to state 98
+    and_expression        go to state 99
+    unary_rel_expression  go to state 100
+    rel_expression        go to state 101
+    sum_expression        go to state 102
+    term                  go to state 103
+    unary_expression      go to state 104
+    factor                go to state 105
+    immutable             go to state 106
+    mutable               go to state 107
+
+
+State 175
+
+   80 conditional_statement: IF '(' condition ')' . compound_statement
+   81                      | IF '(' condition ')' . compound_statement ELSE compound_statement
+
+    '{'  shift, and go to state 39
+
+    compound_statement  go to state 180
+
+
+State 176
+
+   84 iteration_statement: DO compound_statement WHILE '(' . condition ')' ';'
+
+    IDENTIFIER  shift, and go to state 75
+    CONSTANT    shift, and go to state 76
+    NOT         shift, and go to state 82
+    '('         shift, and go to state 84
+
+    expression            go to state 152
+    condition             go to state 181
+    simple_expression     go to state 98
+    and_expression        go to state 99
+    unary_rel_expression  go to state 100
+    rel_expression        go to state 101
+    sum_expression        go to state 102
+    term                  go to state 103
+    unary_expression      go to state 104
+    factor                go to state 105
+    immutable             go to state 106
+    mutable               go to state 107
+
+
+State 177
+
+   49 record_declaration: STRUCT IDENTIFIER '{' $@1 simple_declaration '}' $@2 ';' .
+
+    $default  reduce using rule 49 (record_declaration)
+
+
+State 178
+
+   51 simple_declaration: simple_declaration type_specifier IDENTIFIER ';' .
+
+    $default  reduce using rule 51 (simple_declaration)
+
+
+State 179
+
+   82 condition: expression logop expression .
+
+    $default  reduce using rule 82 (condition)
+
+
+State 180
+
+   80 conditional_statement: IF '(' condition ')' compound_statement .
+   81                      | IF '(' condition ')' compound_statement . ELSE compound_statement
+
+    ELSE  shift, and go to state 182
+
+    $default  reduce using rule 80 (conditional_statement)
+
+
+State 181
+
+   84 iteration_statement: DO compound_statement WHILE '(' condition . ')' ';'
+
+    ')'  shift, and go to state 183
+
+
+State 182
+
+   81 conditional_statement: IF '(' condition ')' compound_statement ELSE . compound_statement
+
+    '{'  shift, and go to state 39
+
+    compound_statement  go to state 184
+
+
+State 183
+
+   84 iteration_statement: DO compound_statement WHILE '(' condition ')' . ';'
+
+    ';'  shift, and go to state 185
+
+
+State 184
+
+   81 conditional_statement: IF '(' condition ')' compound_statement ELSE compound_statement .
+
+    $default  reduce using rule 81 (conditional_statement)
+
+
+State 185
+
+   84 iteration_statement: DO compound_statement WHILE '(' condition ')' ';' .
+
+    $default  reduce using rule 84 (iteration_statement)
