@@ -2,116 +2,14 @@
 	#include <stdio.h>
 	#include <string.h>
 	#include <stdlib.h>
+	#include "symnode.h"
 
-	#define MOD 1007
-	#define PRIME 23
-	#define MAX 300
+	struct scopeTable *symtab = (struct scopeTable*)malloc(sizeof(struct scopeTable));
+	symtab->num = 0;
+	symtab->outer = NULL;
 
 	extern int yylineno;
 	extern char yytext[];
-
-	struct node
-	{
-		int token_num;
-		char type[100];
-		char symbol[100];
-		char value[100];
-		int line_num;
-		int scope_num;
-		struct node *next;
-	};
-
-	struct node *symtab[MAX];
-	for(int i=0;i<MAX;i++)
-	{
-		symtab[i]=NULL;
-	}
-	
-
-	int token_count = 0; // total tokens count
-	int scope_count = 0; // scope count
-
-	int hash(const char* str)
-	{
-		int len = strlen(str);
-	    int hash_value = 0;
-
-	    for(int i=0; i<len; i++)
-	    {
-	    	hash_value = (hash_value * PRIME + str[i]) % MOD;
-	    }
-
-	    printf("Hashed result:%d\n",hash_value);
-
-	    return hash_value;
-	}
-
-	struct node *lookup(const char *str) 
-	{
-		int len = strlen(str);
-		int hashValue = hash(str);
-
-		//get node at hash value
-		struct node *temp = symtab[hashValue];
-
-		while(temp != NULL) 
-		{
-		    if(!strcmp(str, temp->symbol))
-		        return temp;
-		    temp = temp->next;
-		}
-		return NULL;
-	} 
-
-	void insert(int tn, char t[], char s[], char v[], int ln, int sn, int token_count_flag, int scope_count_flag) 
-	{
-	    if(lookup(s) != NULL)
-	        return;
-
-		int hashValue = hash(s);
-	    struct node *temp = malloc(sizeof(struct node));
-
-	    temp->token_num = tn++;
-		strcpy(temp->type, t);
-		strcpy(temp->symbol, s);
-		strcpy(temp->value, v);
-		temp->scope_num = sn;
-		temp->line_num = ln;
-		
-		if (symtab[hashValue] == NULL)
-		{
-			symtab[hashValue] = temp;
-		}
-	    else
-		{
-			struct node* start = symtab[hashValue];
-			while (start->next != NULL)
-				start = start->next;
-			start->next = temp;
-		}
-		
-
-	    //temp->next = symtab[hashValue];
-	    //symtab[hashValue] = temp;
-	}
-
-
-
-	void printsymtab(void)
-	{
-		printf("\n\nSYMBOL TABLE\n\n");
-		printf("Token No.\tType\tSymbol\tValue\tScope No.\tLine No.");
-		int i;
-		printf("\n");
-		for (i = 0;i < MAX;i++)
-		{
-			printf("\n%d\t%s\t%s\t%s\t%d\t%d", symtab[i]->token_num, symtab[i]->type, symtab[i]->symbol, symtab[i]->value, symtab[i]->scope_num, symtab[i]->line_num);
-		}
-	}
-
-
-
-	
 %}
 
 %token IDENTIFIER CONSTANT 
@@ -169,7 +67,7 @@ paramIdList
 paramId
 	: IDENTIFIER 
 		{
-			insert(token_count, "identfier", $1, "-", scope_count, yylineno, 1, 0);
+			superAdd(token_count, "identifier", $1, "-", scope_count, yylineno, 1, 0);
 		}
 	;
 
@@ -178,7 +76,7 @@ paramId
 declarator
 	: IDENTIFIER
 		{
-			insert(token_count, "identfier", $1, "-", scope_count, yylineno, 1, 0);
+			superAdd(token_count, "identifier", $1, "-", scope_count, yylineno, 1, 0);
 		}    
 	;
 
@@ -234,7 +132,7 @@ type_specifier
 	;
 
 record_declaration
-	: STRUCT IDENTIFIER '{' simple_declaration '}' ';'
+	: STRUCT IDENTIFIER '{' { addScope(); }simple_declaration '}' { delScope(); } ';'
 	;
 
 simple_declaration
@@ -245,11 +143,11 @@ simple_declaration
 primary_expression
 	: IDENTIFIER
 		{
-			insert(token_count, "identfier", $1, "-", scope_count, yylineno, 1, 0);
+			superAdd(token_count, "identifier", $1, "-", scope_count, yylineno, 1, 0);
 		}
 	| CONSTANT
 		{
-			insert(token_count, "identfier", $1, "-", scope_count, yylineno, 1, 0);
+			superAdd(token_count, "identifier", $1, "-", scope_count, yylineno, 1, 0);
 		}
 	;
 
@@ -282,8 +180,8 @@ expression
 
 
 compound_statement
-	: '{' {scope_count++;} '}' {scope_count--;}
-	| '{' {scope_count++;}block_scope_list '}' {scope_count--;}
+	: '{' { addScope(); } '}' { delScope(); }
+	| '{' { addScope(); }block_scope_list '}' { delScope(); }
 	;
 
 block_scope_list
@@ -384,7 +282,7 @@ factor
 immutable
 	: CONSTANT  
 		{
-			insert(token_count, "identfier", $1, "-", scope_count, yylineno, 1, 0);
+			superAdd(token_count, "identifier", $1, "-", scope_count, yylineno, 1, 0);
 		}
 	;
 
@@ -392,7 +290,7 @@ immutable
 mutable
 	: IDENTIFIER
 		{
-			insert(token_count, "identfier", $1, "-", scope_count, yylineno, 1, 0);
+			superAdd(token_count, "identifier", $1, "-", scope_count, yylineno, 1, 0);
 		}
 	;
 
