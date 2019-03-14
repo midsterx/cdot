@@ -2,7 +2,7 @@
 
 struct node
 {
-	int a ;
+	int a = 2;
 	char b;
 };
 
@@ -20,7 +20,7 @@ void fun(int x , char y)
 		a+=1;
 	}
 	int d;
-	int z;
+	float z;
 	/* jfhsdfdifhflkfladhfd // fidffhsja */
 
 }

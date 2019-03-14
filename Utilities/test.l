@@ -29,15 +29,15 @@ void tokprint();
 "while"			{ show(); return(WHILE); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
 
 
-"int"			{ show(); return(INT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
-"char"			{ show(); return(CHAR); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
-"long"			{ show(); return(LONG); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
-"void"			{ show(); return(VOID); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
-"double"		{ show(); return(DOUBLE); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
-"float"			{ show(); return(FLOAT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
-"short"         { show(); return(SHORT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
-"unsigned"         { show(); return(UNSIGNED); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
-"signed"         { show(); return(SIGNED); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+"int"			{ show(); yylval.idname = strdup(yytext); return(INT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+"char"			{ show(); yylval.idname = strdup(yytext); return(CHAR); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+"long"			{ show(); yylval.idname = strdup(yytext); return(LONG); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+"void"			{ show(); yylval.idname = strdup(yytext); return(VOID); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+"double"		{ show(); yylval.idname = strdup(yytext); return(DOUBLE); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+"float"			{ show(); yylval.idname = strdup(yytext); return(FLOAT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+"short"         { show(); yylval.idname = strdup(yytext); return(SHORT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+"unsigned"         { show(); yylval.idname = strdup(yytext); return(UNSIGNED); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+"signed"         { show(); yylval.idname = strdup(yytext); return(SIGNED); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
 
 
 "static" { show(); return(STATIC); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword");}

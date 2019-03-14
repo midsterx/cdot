@@ -20,7 +20,7 @@
 20 	 	 a += 1 ; 
 21 	 } 
 22 	 int d ; 
-23 	 int z ; 
+23 	 float z ; 
 24 	 
 25 
 26 } 
@@ -30,16 +30,16 @@
 
 SYMBOL TABLE
 
-Token	Type	Value	Scope	FLine	LLine
-y	identifier	0	2	19	19
-a	identifier	0	2	20	20
-d	identifier	0	2	22	22
-z	identifier	0	2	23	23
-a	identifier	0	2	14	14
-a	identifier	0	1	11	11
-b	identifier	0	1	11	11
-a	identifier	0	1	5	5
-b	identifier	0	1	6	6
-fun	identifier	0	1	9	9
-x	identifier	0	1	9	9
-y	identifier	0	1	9	9
+Token	Type	Value	Scope	Line No.
+y	int	0	2	19
+a		0	2	20
+d	int	0	2	22
+z	float	0	2	23
+a		0	2	14
+a	int	0	1	11
+b		0	1	11
+a	int	0	1	5
+b	char	0	1	6
+fun	void	0	1	9
+x	int	0	1	9
+y	char	0	1	9

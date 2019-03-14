@@ -9,7 +9,7 @@
 
 	extern int yylineno;
 	extern char yytext[];
-
+	char gvar[15] = "";
 	int gscope = 0;
 	int yylex(void);
 	int yyerror(const char *s);
@@ -33,13 +33,15 @@
 %token <idname> IDENTIFIER 
 %token <ival> CONSTANT 
 %token TYPE_NAME
-%token CHAR INT LONG FLOAT DOUBLE VOID SHORT UNSIGNED SIGNED
+%token <idname> CHAR INT LONG FLOAT DOUBLE VOID SHORT UNSIGNED SIGNED
 %token <idname> STRUCT
 %token RELOP AND OR NOT
 %token STATIC EXTERN REGISTER AUTO
 %token ARRTYPE
 %token '=' ';' ','
 %token '(' ')' '{' '}'
+%type <idname> type_specifier
+%type <idname> declarator 
 
 %left '+' '-' 
 %left '*' '/'
@@ -71,12 +73,12 @@ function_definition
 
 params
 	: param_decl
-	| params ',' param_decl
+	| param_decl ',' params  
 	;
 
 param_decl					
-	: scoped_type_specifier declarator
-	| scoped_type_specifier
+	: scoped_type_specifier declarator 
+	| scoped_type_specifier 
 	;
 
 
@@ -85,7 +87,8 @@ param_decl
 declarator
 	: IDENTIFIER
 		{
-			superAdd(symtab, $1, 1, yylineno, "identifier", 0, 4);
+			superAdd(symtab, $1, 1, yylineno, gvar, 0, 4); 
+			strcpy(gvar,"");
 		}    
 	;
 
@@ -101,19 +104,19 @@ init_declarator_list
 	;
 
 init_declarator
-	: declarator   
+	: declarator
 	| declarator '=' primary_expression 
 	| declarator '=' simple_expression 	
 	;
 
 return_type_specifier
-	: STATIC type_specifier
-	| type_specifier
+	: STATIC type_specifier {strcpy(gvar, $2);}
+	| type_specifier {strcpy(gvar, $1);}
 	;
 
 scoped_type_specifier
-	: storage_class type_specifier
-	| type_specifier
+	: storage_class type_specifier {strcpy(gvar, $2);}
+	| type_specifier {strcpy(gvar, $1);}
 	;
 
 storage_class
@@ -145,8 +148,8 @@ record_declaration
 	;
 
 simple_declaration
-	: type_specifier IDENTIFIER { superAdd(symtab, $2, 1, yylineno, "identifier", 0, 4); }';'
-	| simple_declaration type_specifier IDENTIFIER { superAdd(symtab, $3, 1, yylineno, "identifier", 0, 4); }';'
+	: type_specifier IDENTIFIER { superAdd(symtab, $2, 1, yylineno, $1, 0, 4); }';'
+	| simple_declaration type_specifier IDENTIFIER { superAdd(symtab, $3, 1, yylineno, $2, 0, 4); }';'
 	;
 
 

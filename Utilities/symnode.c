@@ -166,7 +166,7 @@ struct node getVal(struct scopeTable *head, char *symbol, int *succ, int lineno)
 int printsymtab(struct scopeTable *head)
 {
     printf("\n\nSYMBOL TABLE\n\n");
-    printf("Token\tType\tValue\tScope\tFLine\tLLine");
+    printf("Token\tType\tValue\tScope\tLine No.");
     printf("\n");
     while(head!=NULL)
     {
@@ -174,7 +174,7 @@ int printsymtab(struct scopeTable *head)
         {
             if(head->symarr[i].valid == 1)
             { 
-                printf("%s\t%s\t%d\t%d\t%d\t%d\n", head->symarr[i].symbol, head->symarr[i].type, head->symarr[i].value, head->symarr[i].scope_num, head->symarr[i].first_line_num, head->symarr[i].last_line_num);
+                printf("%s\t%s\t%d\t%d\t%d\n", head->symarr[i].symbol, head->symarr[i].type, head->symarr[i].value, head->symarr[i].scope_num, head->symarr[i].first_line_num);
                 j++;
             }
         }

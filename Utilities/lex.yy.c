@@ -892,47 +892,47 @@ YY_RULE_SETUP
 case 10:
 YY_RULE_SETUP
 #line 32 "test.l"
-{ show(); return(INT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+{ show(); yylval.idname = strdup(yytext); return(INT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 33 "test.l"
-{ show(); return(CHAR); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+{ show(); yylval.idname = strdup(yytext); return(CHAR); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 34 "test.l"
-{ show(); return(LONG); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+{ show(); yylval.idname = strdup(yytext); return(LONG); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 35 "test.l"
-{ show(); return(VOID); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+{ show(); yylval.idname = strdup(yytext); return(VOID); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 36 "test.l"
-{ show(); return(DOUBLE); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+{ show(); yylval.idname = strdup(yytext); return(DOUBLE); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 37 "test.l"
-{ show(); return(FLOAT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+{ show(); yylval.idname = strdup(yytext); return(FLOAT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 38 "test.l"
-{ show(); return(SHORT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+{ show(); yylval.idname = strdup(yytext); return(SHORT); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 39 "test.l"
-{ show(); return(UNSIGNED); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+{ show(); yylval.idname = strdup(yytext); return(UNSIGNED); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 40 "test.l"
-{ show(); return(SIGNED); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
+{ show(); yylval.idname = strdup(yytext); return(SIGNED); strcpy(toks[tok_count++].name,yytext); strcpy(toks[tok_count++].type,"keyword"); }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
