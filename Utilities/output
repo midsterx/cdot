@@ -1,0 +1,5 @@
+t0	=	i	<	10
+	if( not t0)	goto L1
+t1	=	i	+	2
+i	=	t1
+L1: 

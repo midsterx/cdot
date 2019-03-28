@@ -9,10 +9,94 @@
 	//symtab->outer = NULL;
 
 	extern int yylineno;
-	extern char yytext[];
+	extern char *yytext;
 
 	int yylex(void);
 	int yyerror(const char *s);
+
+	// f1 -> output for the irc
+	FILE * f1;
+	
+
+	//stack
+	char st[1000][10];
+	int top=0;
+	int i=0;
+
+	//temporary variable for t0,t1 ...
+	char temp[2]="t"; 
+
+	//array of labels used
+	int label[200];
+	int lnum=0; //label number
+	int ltop=0; //keep track of label at top (might help in scope .. not sure)
+
+	//copy to top of stack
+	void push()
+	{
+		
+		strcpy(st[++top],yytext);
+	}
+
+	//temp(top-2) =(top-1) b(top)
+	void codegen_assign()
+	{
+	 	fprintf(f1,"%s\t=\t%s\n",st[top-2],st[top]);
+	 	top-=3;
+	}
+
+	//a ( </>/+/* ...) b
+	void codegen_logical()
+	{
+		sprintf(temp,"t%d",i);
+		fprintf(f1,"%s\t=\t%s\t%s\t%s\n",temp,st[top-2],st[top-1],st[top]);
+		top-=2;
+		strcpy(st[top],temp);
+		i++;
+	}
+	 
+
+	//if(condition = false) go to __
+	void if_label1()
+	{
+
+	 	lnum++; 
+	 	fprintf(f1,"\tif( not %s)",st[top]);
+	 	fprintf(f1,"\tgoto L%d\n",lnum);
+	 	label[++ltop]=lnum;
+	 	
+
+	 	//fprintf(f1,"\nTOP IS %s\n",st[top]);
+	 	//fprintf(f1,"\nTOP-1 IS %s\n",st[top-1]);
+	 	//fprintf(f1,"\nTOP-2 IS %s\n",st[top-2]);
+	 	//fprintf(f1,"\nTOP-3 IS %s\n",st[top-3]);
+
+	 	top-=2; //only with this will it come perfectly .. check by uncommenting above lines to see the stack
+	}
+
+	// cond.false case
+	void if_label2()
+	{
+		int x;
+		lnum++;
+		x=label[ltop--];
+
+		fprintf(f1,"\t\tgoto L%d\n",lnum);
+		fprintf(f1,"L%d: \n",x); 
+		label[++ltop]=lnum;
+	}
+
+	// end.case
+	void if_label3()
+	{
+		int y;
+		y=label[ltop--];
+		fprintf(f1,"L%d: \n",y);
+		top--;
+	}
+
+
+
 %}
 
 %token IDENTIFIER CONSTANT 
@@ -73,6 +157,7 @@ declarator
 	: IDENTIFIER
 		{
 			//superAdd(token_count, "identifier", $1, "-", scope_count, yylineno, 1, 0);
+			push();
 		}    
 	;
 
@@ -142,6 +227,7 @@ primary_expression
 	| CONSTANT
 		{
 			//superAdd(token_count, "identifier", $1, "-", scope_count, yylineno, 1, 0);
+			push();
 		}
 	;
 
@@ -157,7 +243,7 @@ statement
 	;
 
 expression_statement
-	: expression ';' 
+	: expression {codegen_assign();}  ';' 
 	| ';' 
 	;
 
@@ -189,8 +275,8 @@ block_item
 	;
 
 conditional_statement
-	: IF '(' condition ')' compound_statement 
-	| IF '(' condition ')' compound_statement ELSE compound_statement 
+	: IF '(' condition ')'  {if_label1();}  compound_statement {if_label3();}
+	| IF '(' condition ')'  {if_label1();} compound_statement {if_label2(); } ELSE compound_statement {if_label3();}
 	;
 
 condition
@@ -232,11 +318,11 @@ unary_rel_expression
 
 rel_expression
 	: sum_expression
-	| sum_expression RELOP sum_expression
+	| sum_expression RELOP {push();}  sum_expression {codegen_logical();}
 	;
 
 sum_expression
-	: sum_expression sumop term 
+	: sum_expression sumop {push();}  term {codegen_logical();}
 	| term
 	;
 
@@ -252,7 +338,7 @@ logop
 
 
 term
-	: term mulop factor 
+	: term mulop {push();} factor {codegen_logical();}
 	| factor
 	;
 
@@ -271,8 +357,11 @@ factor
 %%
 
 
+
+
 void main()
 {
+	f1=fopen("output","w");
 	yyparse();
 	// printsymtab();
 }
