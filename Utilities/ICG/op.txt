@@ -1,0 +1,7 @@
+1#include <stdio.h> 
+2 
+3 int main ( int c , int d ) 
+4 { 
+5 	 int a = b , c = 2 ; 
+6 } 
+7 
