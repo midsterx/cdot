@@ -151,7 +151,7 @@ declaration
 
 init_declarator_list
 	: init_declarator {codegen_assign();}
-	| init_declarator_list ',' init_declarator {codegen_assign();} 
+	| init_declarator_list ',' init_declarator {codegen_assign();}
 	;
 
 init_declarator
@@ -206,7 +206,7 @@ rel_expression
 	;
 
 sum_expression
-	: sum_expression sumop term
+	: sum_expression sumop {push();} term {codegen_logical();}
 	| term
 	;
 

@@ -2,6 +2,8 @@
 2 
 3 int main ( int c , int d ) 
 4 { 
-5 	 int a = b , c = 2 ; 
-6 } 
-7 
+5 int var = 3 , i = d ; 
+6 	 int a = c + d + 2 ; 
+7 	 return 
+Parse Failed
+Error Line Number: 7 syntax error
