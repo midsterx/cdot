@@ -1,4 +1,7 @@
 param	c
 param	d
-a	=	b
-c	=	2
+var	=	3
+i	=	d
+t0	=	c	+	d
+t1	=	t0	+	2
+a	=	t1
