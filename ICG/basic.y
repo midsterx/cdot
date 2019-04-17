@@ -14,7 +14,10 @@
 	int gscope = 0;
 	int yylex(void);
 	int yyerror(const char *s);
-  int param_count;
+  	int param_count;
+	int ISFUNCCALL = 0;
+	int ISCONDCALL = 0;
+	int ISITERCALL = 0;
 
   // f1 -> output for the irc
 	FILE * f1;
@@ -47,6 +50,12 @@
 	 	top-=2;
 	}
 
+	void codegen_func_def()
+	{
+		fprintf(f1,"func\tbegin\t%s\n",st[top]);
+		top-=1;
+	}
+
   //a ( </>/+/* ...) b
 	void codegen_logical()
 	{
@@ -57,15 +66,36 @@
 		i++;
 	}
 
-  void codegen_param(int n)
-  {
-      int l = n;
-      while(l--)
-      {
-        fprintf(f1,"param\t%s\n", st[top-l]);
-      }
-      top=top-n;
-  }
+  	void codegen_param(int n)
+	{
+		int l = n;
+		while(l--)
+		{
+			fprintf(f1,"param\t%s\n", st[top-l]);
+		}
+		top=top-n;
+	}
+
+	void codegen_function_name(int n,int hasReturnType)
+	{
+		if(ISFUNCCALL > 0) {
+			if(hasReturnType) {
+				fprintf(f1,"%s\t=\tcall %s,%d\n",st[top-1],st[top],n);
+				top-=2;
+			} else {
+				fprintf(f1,"call %s,%d\n",st[top],n);
+				top-=1;
+			}
+		}
+	}
+
+	void codegen_conditional_if()
+	{
+		lnum++;
+		fprintf(f1, "ifFalse %s goto L%d\n", st[top], lnum);
+		label[++ltop]=lnum;
+		top-=1;
+	}
 
 %}
 
@@ -124,7 +154,7 @@ external_declaration
 /*FUNCTIONS*/
 
 function_definition
-	: type_specifier declarator '('{ param_count=0; } params { codegen_param(param_count); param_count=0; } ')' compound_statement
+	: type_specifier declarator {codegen_func_def();} '('{ param_count=0; } params { codegen_param(param_count); param_count=0; } ')' compound_statement
 	;
 
 params
@@ -135,6 +165,15 @@ params
 param_decl
 	: type_specifier declarator
 	| type_specifier
+	;
+
+function_call
+	: declarator '(' {param_count=0;} varList {codegen_param(param_count);} ')'
+	;
+
+varList
+	: varList ',' declarator {param_count++;}
+	| declarator {param_count++;}
 	;
 
 
@@ -150,14 +189,15 @@ declaration
 	;
 
 init_declarator_list
-	: init_declarator {codegen_assign();}
-	| init_declarator_list ',' init_declarator {codegen_assign();}
+	: init_declarator {if(ISFUNCCALL) {codegen_function_name(param_count,1); param_count = 0;} else codegen_assign();}
+	| init_declarator_list ',' init_declarator {if(ISFUNCCALL){codegen_function_name(param_count,1); param_count = 0;} else codegen_assign();}
 	;
 
 init_declarator
 	: declarator
-  | declarator '=' primary_expression
-  | declarator '=' simple_expression
+	| declarator '=' primary_expression
+	| declarator '=' simple_expression
+	| declarator '=' function_call {ISFUNCCALL = 1;}
 	;
 
 type_specifier
@@ -202,7 +242,7 @@ unary_rel_expression
 
 rel_expression
 	: sum_expression
-	| sum_expression RELOP sum_expression
+	| sum_expression RELOP {push();} sum_expression {codegen_logical();}
 	;
 
 sum_expression
@@ -221,7 +261,7 @@ logop
 	;
 
 term
-	: term mulop factor
+	: term mulop {push();} factor {codegen_logical();}
 	| factor
 	;
 
@@ -248,8 +288,58 @@ block_scope_list
 
 block_item
 	: declaration
+	| statement
 	;
 
+statement
+	: expression_statement
+	| compound_statement
+	| conditional_statement
+	| iteration_statement
+	| break_statement
+	| continue_statement
+	| return_statement
+	| statement ';' statement
+	| function_call {codegen_function_name(param_count,0); param_count = 0;}
+	;
+
+expression_statement
+	: expression ';' {if(ISFUNCCALL){codegen_function_name(param_count,1); param_count = 0;} else {codegen_assign();} }
+	| ';'
+	;
+
+expression
+	: declarator '=' expression {ISFUNCCALL = 0;}
+	| simple_expression {ISFUNCCALL = 0;}
+	| declarator '=' function_call {ISFUNCCALL = 1;}
+	;
+
+conditional_statement
+	: IF '(' condition ')' { codegen_conditional_if();} compound_statement
+	| IF '(' condition ')' { codegen_conditional_if();} compound_statement ELSE compound_statement
+	;
+
+condition
+	: expression logop{push();} expression { codegen_logical();}
+	| expression
+	;
+
+iteration_statement
+	: DO  compound_statement  WHILE '(' condition ')' ';'
+	;
+
+break_statement
+	: BREAK ';'
+	;
+
+continue_statement
+	: CONTINUE ';'
+	;
+
+return_statement
+	: RETURN ';'
+	| RETURN simple_expression ';'
+	;
 
 %%
 
