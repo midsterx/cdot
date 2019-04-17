@@ -1,7 +1,4 @@
-param	c
-param	d
-var	=	3
-i	=	d
-t0	=	c	+	d
-t1	=	t0	+	2
-a	=	t1
+a = 2 + 3
+b = a + 5
+a = 100
+c = a * b

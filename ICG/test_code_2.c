@@ -2,7 +2,9 @@
 
 int main(int c , int d)
 {
-  int var =3 , i = d;
-	int a = c + d + 2;
-	return 0;
+  if(x>y)
+  {
+    u=1;
+  }
+  fact = u;
 }

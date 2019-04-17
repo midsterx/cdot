@@ -1,0 +1,14 @@
+QUADRUPLE TABLE
+operator      arg1       arg2          result
++             2             3             a             
++             a             5             b             
+=             100                            a             
+*             a             b             c             
+
+AFTER CONSTANT FOLDING AND PROPAGATION
+operator      arg1       arg2          result
+=             5                           a             
+=             10                           b             
+=             100                            a             
+=             1000                           c             
+
