@@ -28,7 +28,7 @@
 %union
 {
 	int ival;
-	nodeType *nPtr;
+	struct nodeType *nPtr;
 	char string[128];
 }
 

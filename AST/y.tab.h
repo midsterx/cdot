@@ -134,10 +134,10 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 31 "ast.y" /* yacc.c:1909  */
+#line 29 "ast.y" /* yacc.c:1909  */
 
 	int ival;
-	nodeType *nPtr;
+	struct nodeType *nPtr;
 	char string[128];
 
 #line 144 "y.tab.h" /* yacc.c:1909  */
