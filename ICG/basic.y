@@ -3,6 +3,7 @@
 	#include <string.h>
 	#include <stdlib.h>
 	#include "symnode.h"
+	#define YYDEBUG_LEXER_TEXT yytext
 
 	struct scopeTable *symtab = NULL;
 	int succ = 0;
@@ -76,7 +77,7 @@
 		top=top-n;
 	}
 
-	void codegen_function_name(int n,int hasReturnType)
+	void codegen_function_name(int n,int hasReturnType) 
 	{
 		if(ISFUNCCALL > 0) {
 			if(hasReturnType) {
@@ -86,17 +87,42 @@
 				fprintf(f1,"call %s,%d\n",st[top],n);
 				top-=1;
 			}
-		}
+		}  	
 	}
 
 	void codegen_conditional_if()
 	{
 		lnum++;
-		fprintf(f1, "ifFalse %s goto L%d\n", st[top], lnum);
-		label[++ltop]=lnum;
+		label[ltop] = lnum;
+		ltop++;
+		fprintf(f1, "ifFalse %s goto L%d\n", temp, lnum);
 		top-=1;
 	}
+	void codegen_conditional_else()
+	{
+		lnum++;
+		fprintf(f1, "goto L%d\n", lnum);
+		fprintf(f1, "L%d:\n", label[ltop-1]);
+		label[ltop] = lnum;
+	}
+	void codegen_conditional_end()
+	{
+		fprintf(f1, "L%d:\n", label[ltop-1]);
+		ltop-=1;
+	}
 
+	void codegen_iterational_begin()
+	{
+		lnum++;
+		label[ltop] = lnum;
+		ltop++;
+		fprintf(f1, "L%d:\n", label[ltop-1]);
+	}
+	void codegen_iterational_end()
+	{
+		fprintf(f1, "if %s goto L%d\n", temp, label[ltop-1]);
+		ltop-=1;
+	}
 %}
 
 %union
@@ -109,7 +135,12 @@
 }
 
 %token HEADER
-%token IF ELSE WHILE DO BREAK CONTINUE
+%token ELSE
+%token IF WHILE DO BREAK CONTINUE
+%nonassoc IF
+%nonassoc ELSE
+%nonassoc REDUCE
+
 %token RETURN
 %token SHORTHANDADD SHORTHANDSUB SHORTHANDMULT SHORTHANDDIV
 %token INCREMENT DECREMENT
@@ -158,8 +189,8 @@ function_definition
 	;
 
 params
-	: param_decl {param_count++;}
-	| param_decl ',' params {param_count++;}
+	: param_decl ',' params {param_count++;}
+	| param_decl {param_count++;}
 	;
 
 param_decl
@@ -190,14 +221,14 @@ declaration
 
 init_declarator_list
 	: init_declarator {if(ISFUNCCALL) {codegen_function_name(param_count,1); param_count = 0;} else codegen_assign();}
-	| init_declarator_list ',' init_declarator {if(ISFUNCCALL){codegen_function_name(param_count,1); param_count = 0;} else codegen_assign();}
+	| init_declarator_list ',' init_declarator {if(ISFUNCCALL){codegen_function_name(param_count,1); param_count = 0;} else codegen_assign();} 
 	;
 
 init_declarator
-	: declarator
-	| declarator '=' primary_expression
+	: declarator '=' primary_expression
 	| declarator '=' simple_expression
 	| declarator '=' function_call {ISFUNCCALL = 1;}
+	| declarator
 	;
 
 type_specifier
@@ -237,17 +268,17 @@ and_expression
 
 unary_rel_expression
 	: NOT factor
-	| rel_expression
+	| rel_expression 
 	;
 
 rel_expression
 	: sum_expression
-	| sum_expression RELOP {push();} sum_expression {codegen_logical();}
+	| sum_expression RELOP {push();} sum_expression 
 	;
 
 sum_expression
 	: sum_expression sumop {push();} term {codegen_logical();}
-	| term
+	| term 
 	;
 
 sumop
@@ -256,13 +287,13 @@ sumop
 	;
 
 logop
-	: OR
-	| AND
+	: OR {push();}
+	| AND {push();}
 	;
 
 term
 	: term mulop {push();} factor {codegen_logical();}
-	| factor
+	| factor 
 	;
 
 mulop
@@ -287,7 +318,7 @@ block_scope_list
 	;
 
 block_item
-	: declaration
+	: declaration 
 	| statement
 	;
 
@@ -304,8 +335,8 @@ statement
 	;
 
 expression_statement
-	: expression ';' {if(ISFUNCCALL){codegen_function_name(param_count,1); param_count = 0;} else {codegen_assign();} }
-	| ';'
+	: expression ';' {if(ISFUNCCALL){codegen_function_name(param_count,1); param_count = 0;} else {codegen_assign();} } 
+	| ';' 
 	;
 
 expression
@@ -315,17 +346,17 @@ expression
 	;
 
 conditional_statement
-	: IF '(' condition ')' { codegen_conditional_if();} compound_statement
-	| IF '(' condition ')' { codegen_conditional_if();} compound_statement ELSE compound_statement
+	: IF '(' condition {codegen_conditional_if(); }')' compound_statement %prec REDUCE {codegen_conditional_end();}
+	| IF '(' condition {codegen_conditional_if(); }')' compound_statement ELSE {codegen_conditional_else();} compound_statement {codegen_conditional_end();}
 	;
 
 condition
-	: expression logop{push();} expression { codegen_logical();}
-	| expression
+	: expression logop expression 
+	| expression {codegen_logical();}
 	;
 
 iteration_statement
-	: DO  compound_statement  WHILE '(' condition ')' ';'
+	: DO {codegen_iterational_begin();}  compound_statement  WHILE '(' condition ')' {codegen_iterational_end(); } ';'
 	;
 
 break_statement
@@ -337,7 +368,7 @@ continue_statement
 	;
 
 return_statement
-	: RETURN ';'
+	: RETURN ';' 
 	| RETURN simple_expression ';'
 	;
 
@@ -346,7 +377,8 @@ return_statement
 
 void main()
 {
-  f1=fopen("output","w");
+  	f1=fopen("output","w");
+	yydebug = 0;
 	yyparse();
 	//printsymtab(symtab);
 }

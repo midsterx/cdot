@@ -73,15 +73,18 @@ extern int yydebug;
     UNSIGNED = 283,
     SIGNED = 284,
     STRUCT = 285,
-    RELOP = 286,
-    AND = 287,
-    OR = 288,
-    NOT = 289,
-    STATIC = 290,
-    EXTERN = 291,
-    REGISTER = 292,
-    AUTO = 293,
-    ARRTYPE = 294
+    GE_OP = 286,
+    LE_OP = 287,
+    NE_OP = 288,
+    EQ_OP = 289,
+    AND = 290,
+    OR = 291,
+    NOT = 292,
+    STATIC = 293,
+    EXTERN = 294,
+    REGISTER = 295,
+    AUTO = 296,
+    ARRTYPE = 297
   };
 #endif
 /* Tokens.  */
@@ -113,30 +116,31 @@ extern int yydebug;
 #define UNSIGNED 283
 #define SIGNED 284
 #define STRUCT 285
-#define RELOP 286
-#define AND 287
-#define OR 288
-#define NOT 289
-#define STATIC 290
-#define EXTERN 291
-#define REGISTER 292
-#define AUTO 293
-#define ARRTYPE 294
+#define GE_OP 286
+#define LE_OP 287
+#define NE_OP 288
+#define EQ_OP 289
+#define AND 290
+#define OR 291
+#define NOT 292
+#define STATIC 293
+#define EXTERN 294
+#define REGISTER 295
+#define AUTO 296
+#define ARRTYPE 297
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 
 union YYSTYPE
 {
-#line 129 "basic.y" /* yacc.c:1909  */
+#line 31 "ast.y" /* yacc.c:1909  */
 
 	int ival;
-	long int lival;
-	double dval;
-	float fval;
-	char* idname;
+	nodeType *nPtr;
+	char string[128];
 
-#line 140 "y.tab.h" /* yacc.c:1909  */
+#line 144 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

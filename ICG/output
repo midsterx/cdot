@@ -1,4 +1,41 @@
-a = 2 + 3
-b = a + 5
-a = 100
-c = a * b
+func	begin	main
+param	c
+param	d
+t0	=	5	*	4
+t1	=	3	+	t0
+t2	=	t1	+	2
+a	=	t2
+t3	=	b	*	3
+a	=	t3
+t4	=	d	+	4
+c	=	t4
+var	=	3
+i	=	d
+t5	=	c	+	d
+t6	=	t5	+	2
+a	=	t6
+param	a
+param	b
+param	c
+b	=	call f,3
+param	a
+param	b
+param	c
+b	=	call f,3
+param	a
+param	b
+param	c
+call f,3
+t7	=	x	>	y
+ifFalse t7 goto L1
+u	=	1
+L1:
+fact	=	u
+L2:
+u	=	2
+t8	=	z	>	w
+if t8 goto L2
+t9	=	x	>	y
+ifFalse t9 goto L3
+u	=	1
+L3:
