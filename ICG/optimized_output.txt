@@ -1,14 +1,70 @@
 QUADRUPLE TABLE
 operator      arg1       arg2          result
-+             2             3             a             
-+             a             5             b             
-=             100                            a             
-*             a             b             c             
+param        c                                           
+param        d                                           
+*             5             4             t0             
++             3             t0             t1             
++             t1             2             t2             
+=             t2                            a             
+*             b             3             t3             
+=             t3                            a             
++             d             4             t4             
+=             t4                            c             
+=             3                            var             
+=             d                            i             
++             c             d             t5             
++             t5             2             t6             
+=             t6                            a             
+param        a                                           
+param        b                                           
+param        c                                           
+call        f             3             b             
+>             x             y             t7             
+ifFalse        t7                          L1             
+=             1                            u             
+label                                       L1:             
+=             u                            fact             
+label                                       L2:             
+=             2                            u             
+>             z             w             t8             
+if             t8                          L2             
+>             x             y             t9             
+ifFalse        t9                          L3             
+=             1                            u             
+label                                       L3:             
 
 AFTER CONSTANT FOLDING AND PROPAGATION
 operator      arg1       arg2          result
-=             5                           a             
-=             10                           b             
-=             100                            a             
-=             1000                           c             
+param        c                                           
+param        d                                           
+=             20                           t0             
+=             23                           t1             
+=             25                           t2             
+=             25                            a             
+*             b             3             t3             
+=             t3                            a             
++             d             4             t4             
+=             t4                            c             
+=             3                            var             
+=             d                            i             
++             c             d             t5             
++             t5             2             t6             
+=             t6                            a             
+param        a                                           
+param        b                                           
+param        c                                           
+call        f             3             b             
+>             x             y             t7             
+ifFalse        t7                          L1             
+=             1                            u             
+label                                       L1:             
+=             1                            fact             
+label                                       L2:             
+=             2                            u             
+>             z             w             t8             
+if             t8                          L2             
+>             x             y             t9             
+ifFalse        t9                          L3             
+=             1                            u             
+label                                       L3:             
 

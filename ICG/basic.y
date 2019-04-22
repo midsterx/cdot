@@ -77,17 +77,17 @@
 		top=top-n;
 	}
 
-	void codegen_function_name(int n,int hasReturnType) 
+	void codegen_function_name(int n,int hasReturnType)
 	{
 		if(ISFUNCCALL > 0) {
 			if(hasReturnType) {
-				fprintf(f1,"%s\t=\tcall %s,%d\n",st[top-1],st[top],n);
+				fprintf(f1,"%s\t=\tcall %s %d\n",st[top-1],st[top],n);
 				top-=2;
 			} else {
-				fprintf(f1,"call %s,%d\n",st[top],n);
+				fprintf(f1,"call %s %d\n",st[top],n);
 				top-=1;
 			}
-		}  	
+		}
 	}
 
 	void codegen_conditional_if()
@@ -221,7 +221,7 @@ declaration
 
 init_declarator_list
 	: init_declarator {if(ISFUNCCALL) {codegen_function_name(param_count,1); param_count = 0;} else codegen_assign();}
-	| init_declarator_list ',' init_declarator {if(ISFUNCCALL){codegen_function_name(param_count,1); param_count = 0;} else codegen_assign();} 
+	| init_declarator_list ',' init_declarator {if(ISFUNCCALL){codegen_function_name(param_count,1); param_count = 0;} else codegen_assign();}
 	;
 
 init_declarator
@@ -268,17 +268,17 @@ and_expression
 
 unary_rel_expression
 	: NOT factor
-	| rel_expression 
+	| rel_expression
 	;
 
 rel_expression
 	: sum_expression
-	| sum_expression RELOP {push();} sum_expression 
+	| sum_expression RELOP {push();} sum_expression
 	;
 
 sum_expression
 	: sum_expression sumop {push();} term {codegen_logical();}
-	| term 
+	| term
 	;
 
 sumop
@@ -293,7 +293,7 @@ logop
 
 term
 	: term mulop {push();} factor {codegen_logical();}
-	| factor 
+	| factor
 	;
 
 mulop
@@ -318,7 +318,7 @@ block_scope_list
 	;
 
 block_item
-	: declaration 
+	: declaration
 	| statement
 	;
 
@@ -335,8 +335,8 @@ statement
 	;
 
 expression_statement
-	: expression ';' {if(ISFUNCCALL){codegen_function_name(param_count,1); param_count = 0;} else {codegen_assign();} } 
-	| ';' 
+	: expression ';' {if(ISFUNCCALL){codegen_function_name(param_count,1); param_count = 0;} else {codegen_assign();} }
+	| ';'
 	;
 
 expression
@@ -351,7 +351,7 @@ conditional_statement
 	;
 
 condition
-	: expression logop expression 
+	: expression logop expression
 	| expression {codegen_logical();}
 	;
 
@@ -368,7 +368,7 @@ continue_statement
 	;
 
 return_statement
-	: RETURN ';' 
+	: RETURN ';'
 	| RETURN simple_expression ';'
 	;
 
