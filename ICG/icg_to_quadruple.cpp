@@ -199,7 +199,6 @@ quadruple constant_optimize(quadruple q)
 }
 
 
-
 int main()
 {
   //instantiate the table

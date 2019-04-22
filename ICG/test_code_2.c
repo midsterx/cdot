@@ -8,8 +8,8 @@ int main(int c , int d)
   int var =3 , i = d;
   int a = c + d + 2;
   int b = f(a,b,c);
-  b = f(a,b,c);
-  f(a,b,c);
+  // b = f(a,b,c);
+  // f(a,b,c);
 
   if (x > y)
   {
@@ -21,7 +21,7 @@ int main(int c , int d)
   {
     u = 2;
   } while (z > w);
-  
+
   if (x > y)
   {
 	  u = 1;

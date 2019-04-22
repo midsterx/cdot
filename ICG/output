@@ -17,15 +17,7 @@ a	=	t6
 param	a
 param	b
 param	c
-b	=	call f,3
-param	a
-param	b
-param	c
-b	=	call f,3
-param	a
-param	b
-param	c
-call f,3
+b	=	call f 3
 t7	=	x	>	y
 ifFalse t7 goto L1
 u	=	1
