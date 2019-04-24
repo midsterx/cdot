@@ -76,10 +76,11 @@
 	extern char yytext[];
 	char gvar[15] = "";
 	int gscope = 0;
+	int gval = 0;
 	int yylex(void);
 	int yyerror(const char *s);
 
-#line 83 "y.tab.c" /* yacc.c:339  */
+#line 84 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -195,7 +196,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 19 "test.y" /* yacc.c:355  */
+#line 20 "test.y" /* yacc.c:355  */
 
 	int ival;
 	long int lival;
@@ -203,7 +204,7 @@ union YYSTYPE
 	float fval;
 	char* idname;
 
-#line 207 "y.tab.c" /* yacc.c:355  */
+#line 208 "y.tab.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -220,7 +221,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 224 "y.tab.c" /* yacc.c:358  */
+#line 225 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -521,17 +522,17 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    53,    53,    54,    58,    59,    63,    64,    65,    71,
-      75,    76,    80,    81,    88,    96,    97,    97,    98,   102,
-     103,   107,   108,   109,   113,   114,   118,   119,   123,   124,
-     125,   126,   130,   131,   132,   133,   134,   135,   136,   137,
-     138,   139,   140,   141,   142,   143,   147,   147,   147,   151,
-     151,   152,   152,   157,   158,   165,   166,   167,   168,   169,
-     170,   171,   172,   176,   177,   181,   182,   183,   184,   185,
-     186,   187,   188,   193,   193,   194,   194,   198,   199,   203,
-     204,   208,   209,   213,   214,   218,   222,   226,   230,   231,
-     235,   236,   240,   241,   245,   246,   250,   251,   255,   256,
-     260,   261,   265,   266,   271,   272,   276,   277,   282,   283
+       0,    54,    54,    55,    59,    60,    64,    65,    66,    72,
+      76,    77,    81,    82,    89,    97,    98,    98,    99,   103,
+     104,   108,   109,   110,   114,   115,   119,   120,   124,   125,
+     126,   127,   131,   132,   133,   134,   135,   136,   137,   138,
+     139,   140,   141,   142,   143,   144,   148,   148,   148,   152,
+     152,   153,   153,   158,   159,   166,   167,   168,   169,   170,
+     171,   172,   173,   177,   178,   182,   183,   184,   185,   186,
+     187,   188,   189,   194,   194,   195,   195,   199,   200,   204,
+     205,   209,   210,   214,   215,   219,   223,   227,   231,   232,
+     236,   237,   241,   242,   246,   247,   251,   252,   256,   257,
+     261,   262,   266,   267,   272,   273,   277,   278,   283,   284
 };
 #endif
 
@@ -1443,108 +1444,108 @@ yyreduce:
   switch (yyn)
     {
         case 3:
-#line 54 "test.y" /* yacc.c:1646  */
+#line 55 "test.y" /* yacc.c:1646  */
     {gscope++; symtab = addScope(symtab,gscope);}
-#line 1449 "y.tab.c" /* yacc.c:1646  */
+#line 1450 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 89 "test.y" /* yacc.c:1646  */
+#line 90 "test.y" /* yacc.c:1646  */
     {
-			superAdd(symtab, (yyvsp[0].idname), 1, yylineno, gvar, 0, 4); 
+			superAdd(symtab, (yyvsp[0].idname), 1, yylineno, gvar, gval, 4, gscope); 
 			strcpy(gvar,"");
 		}
-#line 1458 "y.tab.c" /* yacc.c:1646  */
+#line 1459 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 97 "test.y" /* yacc.c:1646  */
-    { superAdd(symtab, (yyvsp[0].idname), 1, yylineno, (yyvsp[-1].idname), 0, 4);}
-#line 1464 "y.tab.c" /* yacc.c:1646  */
+#line 98 "test.y" /* yacc.c:1646  */
+    { superAdd(symtab, (yyvsp[0].idname), 1, yylineno, (yyvsp[-1].idname), 0, 4, gscope);}
+#line 1465 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 113 "test.y" /* yacc.c:1646  */
+#line 114 "test.y" /* yacc.c:1646  */
     {strcpy(gvar, (yyvsp[0].idname));}
-#line 1470 "y.tab.c" /* yacc.c:1646  */
+#line 1471 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 114 "test.y" /* yacc.c:1646  */
+#line 115 "test.y" /* yacc.c:1646  */
     {strcpy(gvar, (yyvsp[0].idname));}
-#line 1476 "y.tab.c" /* yacc.c:1646  */
+#line 1477 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 118 "test.y" /* yacc.c:1646  */
+#line 119 "test.y" /* yacc.c:1646  */
     {strcpy(gvar, (yyvsp[0].idname));}
-#line 1482 "y.tab.c" /* yacc.c:1646  */
+#line 1483 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 119 "test.y" /* yacc.c:1646  */
+#line 120 "test.y" /* yacc.c:1646  */
     {strcpy(gvar, (yyvsp[0].idname));}
-#line 1488 "y.tab.c" /* yacc.c:1646  */
+#line 1489 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 147 "test.y" /* yacc.c:1646  */
+#line 148 "test.y" /* yacc.c:1646  */
     { gscope++; symtab = addScope(symtab,gscope); }
-#line 1494 "y.tab.c" /* yacc.c:1646  */
+#line 1495 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 147 "test.y" /* yacc.c:1646  */
-    { gscope--;/*delScope(symtab);*/ }
-#line 1500 "y.tab.c" /* yacc.c:1646  */
+#line 148 "test.y" /* yacc.c:1646  */
+    { gscope--;leaveScope(symtab); }
+#line 1501 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 151 "test.y" /* yacc.c:1646  */
-    { superAdd(symtab, (yyvsp[0].idname), 1, yylineno, (yyvsp[-1].idname), 0, 4); }
-#line 1506 "y.tab.c" /* yacc.c:1646  */
+#line 152 "test.y" /* yacc.c:1646  */
+    { superAdd(symtab, (yyvsp[0].idname), 1, yylineno, (yyvsp[-1].idname), gval, 4, gscope); }
+#line 1507 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 152 "test.y" /* yacc.c:1646  */
-    { superAdd(symtab, (yyvsp[0].idname), 1, yylineno, (yyvsp[-1].idname), 0, 4); }
-#line 1512 "y.tab.c" /* yacc.c:1646  */
+#line 153 "test.y" /* yacc.c:1646  */
+    { superAdd(symtab, (yyvsp[0].idname), 1, yylineno, (yyvsp[-1].idname), gval, 4, gscope); }
+#line 1513 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 159 "test.y" /* yacc.c:1646  */
+#line 160 "test.y" /* yacc.c:1646  */
     {
 			/*superAdd(symtab, $1, 1, yylineno, "constant", 0);*/
 		}
-#line 1520 "y.tab.c" /* yacc.c:1646  */
+#line 1521 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 193 "test.y" /* yacc.c:1646  */
+#line 194 "test.y" /* yacc.c:1646  */
     { gscope++; symtab = addScope(symtab,gscope); }
-#line 1526 "y.tab.c" /* yacc.c:1646  */
+#line 1527 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 74:
-#line 193 "test.y" /* yacc.c:1646  */
-    { gscope--;/*delScope(symtab);*/ }
-#line 1532 "y.tab.c" /* yacc.c:1646  */
+#line 194 "test.y" /* yacc.c:1646  */
+    { gscope--;leaveScope(symtab); }
+#line 1533 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 194 "test.y" /* yacc.c:1646  */
+#line 195 "test.y" /* yacc.c:1646  */
     { gscope++; symtab = addScope(symtab,gscope); }
-#line 1538 "y.tab.c" /* yacc.c:1646  */
+#line 1539 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 76:
-#line 194 "test.y" /* yacc.c:1646  */
-    { gscope--;/*delScope(symtab);*/ }
-#line 1544 "y.tab.c" /* yacc.c:1646  */
+#line 195 "test.y" /* yacc.c:1646  */
+    { gscope--;leaveScope(symtab); }
+#line 1545 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1548 "y.tab.c" /* yacc.c:1646  */
+#line 1549 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1772,7 +1773,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 287 "test.y" /* yacc.c:1906  */
+#line 288 "test.y" /* yacc.c:1906  */
 
 
 

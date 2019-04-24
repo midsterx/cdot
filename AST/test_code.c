@@ -1,5 +1,9 @@
 int main()
 {
-  int i, j ,k=1;
+  int i; 
+  int j;
+  int k=1;
   j = i-k;
+  if (i)
+    k = 2;
 }

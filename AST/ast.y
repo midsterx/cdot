@@ -23,6 +23,7 @@
 	// prototype to create a node for a constat 
 	nodeType *con(char *value);
 	
+	int if_assign = 1;
 %}
 
 %union
@@ -32,236 +33,238 @@
 	char string[128];
 }
 
-%token HEADER
-%token ELSE
-%token IF WHILE DO BREAK CONTINUE
-%nonassoc IF
-%nonassoc ELSE
-%nonassoc REDUCE
-
-%token RETURN
+%token HASH INCLUDE DEFINE STDIO STDLIB MATH STRING TIME HEADER_LITERAL
+%token IF ELSE WHILE DO BREAK CONTINUE RETURN
 %token SHORTHANDADD SHORTHANDSUB SHORTHANDMULT SHORTHANDDIV
 %token INCREMENT DECREMENT
 
 %token <string> IDENTIFIER
 %token <string> CONSTANT
 %token TYPE_NAME
-%token <string> CHAR INT LONG FLOAT DOUBLE VOID SHORT UNSIGNED SIGNED
-%token <string> STRUCT
-%token <string> GE_OP LE_OP NE_OP EQ_OP AND OR NOT
+%token CHAR INT LONG FLOAT DOUBLE VOID MAIN SHORT UNSIGNED SIGNED
+%token STRUCT
+%token GE_OP LE_OP NE_OP EQ_OP AND OR NOT
 %token STATIC EXTERN REGISTER AUTO
 %token ARRTYPE
 %token '=' ';' ','
 %token '(' ')' '{' '}'
 
-%type <nPtr> primary_expression function_call param_decl params simple_expression
-%type <nPtr> varList declarator type_specifier
-%type <nPtr> and_expression unary_rel_expression rel_expression sum_expression
-%type <nPtr> statement compound_statement expression_statement block_item
+%type <nPtr> primary_expression postfix_expression multiplicative_expression
+%type <nPtr> unary_expression additive_expression relational_expression
+%type <nPtr> equality_expression conditional_expression assignment_expression
+%type <nPtr> statement compound_statement expression_statement block_item 
+%type <nPtr> conditional_statement return_statement break_statement continue_statement
 %type <nPtr> expression init_declarator init_declarator_list
-%type <nPtr> iteration_statement conditional_statement translation_unit
-%type <nPtr> external_declaration declaration block_scope_list
-%type <nPtr> sumop mulop
-%type <nPtr> term factor
+%type <nPtr> iteration_statement block_item_list translation_unit
+%type <nPtr> external_declaration declaration
 
 %left '+' '-'
 %left '*' '/'
 
-%start start_state
+%start translation_unit
 
 %%
 
-start_state
-	: HEADER start_state
-	| translation_unit
-	;
-
 translation_unit
 	: external_declaration
-	| translation_unit external_declaration
-	;
-
+	| translation_unit external_declaration 	;
 
 external_declaration
-	: function_definition
-	| declaration
+	: INT MAIN '(' ')' compound_statement	{ex($5, 0); /*freeNode($2);*/}
+	| declaration							{
+												if(if_assign)
+												{
+													ex($1, 2); /*freeNode($2);*/
+												}
+											}
+	| headers
 	;
 
-/*FUNCTIONS*/
-
-function_definition
-	: type_specifier declarator '('params ')' compound_statement
+headers
+	: HASH INCLUDE HEADER_LITERAL
+	| HASH INCLUDE '<' libraries '>'
 	;
 
-params
-	: param_decl ',' params {$$ = opr(',', 2, $1, $3);}
-	| param_decl {$$ = $1;}
+libraries
+	: STDIO
+	| STDLIB
+	| MATH
+	| STRING
+	| TIME
 	;
 
-param_decl
-	: type_specifier declarator
-	| type_specifier
+primary_expression
+	: IDENTIFIER		{$$ = id($1);}
+	| CONSTANT			{$$ = con($1);}
+	| '(' expression ')'	{$$ = $2;}
 	;
 
-function_call
-	: declarator '(' varList ')' { $$ = $3; }
+postfix_expression
+	: primary_expression	{$$ = $1;}
+	| postfix_expression '(' ')'
+	| postfix_expression INCREMENT		{
+											$$ = opr('=', 2, $1, opr('+', 2, $1, con("1") ) );
+										}
+	| postfix_expression DECREMENT			{
+											$$ = opr('=', 2, $1, opr('-', 2, $1, con("1") ) );
+										}
+	| INCREMENT primary_expression		{
+											$$ = opr('=', 2, $2, opr('+', 2, $2, con("1") ) );
+										}
+	| DECREMENT primary_expression		{
+											$$ = opr('=', 2, $2, opr('-', 2, $2, con("1") ) );
+										}
+
 	;
 
-varList
-	: varList ',' declarator {$$ = opr(',', 2, $1, $3);}
-	| declarator { $$ = $1; }
+unary_expression
+	: postfix_expression 			{$$ = $1;}
+	| '+' unary_expression			{$$ = opr('+', 1, $2);}
+	| '-' unary_expression			{$$ = opr('+', 1, $2);}
 	;
 
+multiplicative_expression
+	: unary_expression						{$$ = $1;}
+	| multiplicative_expression '*' unary_expression		{$$ = opr('*', 2, $1, $3);}
+	| multiplicative_expression '/' unary_expression		{$$ = opr('/', 2, $1, $3);}
+	| multiplicative_expression '%' unary_expression		{$$ = opr('%', 2, $1, $3);}
+	;
 
-/*DECLARATIONS*/
+additive_expression
+	: multiplicative_expression					{$$ = $1;}
+	| additive_expression '+' multiplicative_expression		{$$ = opr('+', 2, $1, $3);}
+	| additive_expression '-' multiplicative_expression		{$$ = opr('-', 2, $1, $3);}
+	;
 
-declarator
-	: IDENTIFIER { $$ = id($1); }
+relational_expression
+	: additive_expression
+	| relational_expression '<' additive_expression			{$$ = opr('<', 2, $1, $3);}
+	| relational_expression '>' additive_expression			{$$ = opr('>', 2, $1, $3);}
+	| relational_expression LE_OP additive_expression		{$$ = opr(LE_OP, 2, $1, $3);}
+	| relational_expression GE_OP additive_expression		{$$ = opr(GE_OP, 2, $1, $3);}
+	;
+
+equality_expression
+	: relational_expression						{$$ = $1;}
+	| equality_expression EQ_OP relational_expression 		{$$ = opr(EQ_OP, 2, $1, $3);}
+	| equality_expression NE_OP relational_expression		{$$ = opr(NE_OP, 2, $1, $3);}
+	;
+
+conditional_expression
+	: equality_expression						{$$ = $1;}
+	| equality_expression '?' expression ':' conditional_expression	{$$ = opr('?', 2, $1, opr(':', 2, $3, $5) );}
+	;
+
+assignment_expression
+	: conditional_expression					{$$ = $1;}
+	| unary_expression '=' assignment_expression {$$ = opr('=', 2, $1, $3);}
+	| unary_expression SHORTHANDADD assignment_expression {$$ = opr('=', 2, $1, opr('+', 2, $1, $3) );}
+	| unary_expression SHORTHANDSUB assignment_expression {$$ = opr('=', 2, $1, opr('-', 2, $1, $3) );}
+	| unary_expression SHORTHANDMULT assignment_expression {$$ = opr('=', 2, $1, opr('*', 2, $1, $3) );}
+	| unary_expression SHORTHANDDIV assignment_expression {$$ = opr('=', 2, $1, opr('/', 2, $1, $3) );}
+	;
+
+expression
+	: assignment_expression						{$$ = $1;}
+	| expression ',' assignment_expression
+	;
+
+constant_expression
+	: conditional_expression					{}
 	;
 
 declaration
-	: type_specifier init_declarator_list ';' {$$ = opr(';', 1, $2);}
-	| type_specifier ';' {$$ = opr(';', 1, $1);}
+	: type_specifier ';'								//{$$ = opr(';', 1, $1);}
+	| type_specifier init_declarator_list ';'			{$$ = opr(';', 1, $2);}
 	;
 
 init_declarator_list
-	: init_declarator {$$ = $1;}
-	| init_declarator_list ',' init_declarator {$$ = opr(',', 2, $1, $3);}
+	: init_declarator									{$$ = $1;}
+	| init_declarator_list ',' init_declarator			{$$ = opr(',', 2, $1, $3);}
 	;
 
 init_declarator
-	: declarator '=' primary_expression {$$ = opr('=', 2, $1, $3);}
-	| declarator '=' simple_expression {$$ = opr('=', 2, $1, $3);}
-	| declarator '=' function_call {$$ = opr('=', 2, $1, $3);}
-	| declarator {$$ = id($1);}
+	: IDENTIFIER '=' assignment_expression 				{$$ = opr('=', 2, id($1), $3);}
+	| IDENTIFIER										{$$ = id($1);}
 	;
 
 type_specifier
 	: VOID
 	| CHAR
 	| INT
-	| LONG
 	| FLOAT
-	| DOUBLE
-	| UNSIGNED INT
-	| UNSIGNED SHORT INT
-	| UNSIGNED LONG INT
-	| UNSIGNED LONG LONG INT
-	| SIGNED INT
-	| SIGNED SHORT INT
-	| SIGNED LONG INT
-	| SIGNED LONG LONG INT
+	| struct_specifier				{if_assign = 0;}
 	;
 
-primary_expression
-	: declarator {$$ = $1;}
-	| CONSTANT {$$ = con($1);}
+struct_specifier
+	: STRUCT '{' struct_declaration_list '}'
+	| STRUCT IDENTIFIER '{' struct_declaration_list '}'
+	| STRUCT IDENTIFIER
 	;
 
-simple_expression
-	: simple_expression OR and_expression {$$ = opr($2, 2, $1, $3);}
-	| and_expression {$$ = $1;}
+struct_declaration_list
+	: struct_declaration
+	| struct_declaration_list struct_declaration
 	;
 
-and_expression
-	: and_expression AND unary_rel_expression {$$ = opr($2, 2, $1, $3);}
-	| unary_rel_expression {$$ = $1;}
+struct_declaration
+	: specifier_qualifier_list ';'	/* for anonymous struct/union */
+	| specifier_qualifier_list struct_declarator_list ';'
 	;
 
-unary_rel_expression
-	: NOT factor
-	| rel_expression {$$ = $1;}
+specifier_qualifier_list
+	: type_specifier specifier_qualifier_list
+	| type_specifier
 	;
 
-rel_expression
-	: sum_expression {$$ = $1;}
-	| sum_expression GE_OP sum_expression {$$ = opr($2, 2, $1, $3);}
-	| sum_expression NE_OP sum_expression {$$ = opr($2, 2, $1, $3);}
-	| sum_expression LE_OP sum_expression {$$ = opr($2, 2, $1, $3);}
-	| sum_expression EQ_OP sum_expression {$$ = opr($2, 2, $1, $3);}
+struct_declarator_list
+	: struct_declarator
+	| struct_declarator_list ',' struct_declarator
 	;
 
-sum_expression
-	: sum_expression sumop term {$$ = opr($2, 2, $1, $3);}
-	| term {$$ = $1;}
-	;
-
-sumop
-	: '+'
-	| '-'
-	;
-
-logop
-	: OR 
-	| AND
-	;
-
-term
-	: term mulop factor {$$ = opr($2, 2, $1, $3);}
-	| factor {$$ = $1;}
-	;
-
-mulop
-	: '*'
-	| '/'
-	;
-
-factor
-	: primary_expression {$$ = $1;}
-	| '(' simple_expression ')'
-	;
-
-
-compound_statement
-	: '{' '}'
-	| '{' block_scope_list '}' {$$ = $2;}
-	;
-
-block_scope_list
-	: block_item {$$ = $1;}
-	| block_item block_scope_list {$$ = opr(';', 2, $2, $1);}
-	;
-
-block_item
-	: declaration {$$ = $1;}
-	| statement {$$ = $1;}
+struct_declarator
+	: ':' constant_expression
+	| IDENTIFIER ':' constant_expression
+	| IDENTIFIER
 	;
 
 statement
-	: expression_statement {$$ = $1;}
-	| compound_statement {$$ = $1;}
+	: compound_statement	{$$ = $1;}
+	| expression_statement	{$$ = $1;}
+	| iteration_statement	{$$ = $1;}
 	| conditional_statement {$$ = $1;}
-	| iteration_statement {$$ = $1;}
-	| break_statement
-	| continue_statement
-	| return_statement
-	| statement ';' statement
-	| function_call 
+	| break_statement		{$$ = $1;}
+	| continue_statement	{$$ = $1;}
+	| return_statement		{$$ = $1;}
+	;
+
+compound_statement
+	: '{' '}'
+	| '{' block_item_list '}'	{$$ = $2;}
+	;
+
+block_item_list
+	: block_item	{$$ = $1;}
+	| block_item_list block_item {$$ = opr(';', 2, $1, $2);}
+	;
+
+block_item
+	: declaration	{$$ = $1;}
+	| statement		{$$ = $1;}
 	;
 
 expression_statement
-	: expression ';' {$$ = $1;}
-	| ';' 
-	;
-
-expression
-	: declarator '=' expression
-	| simple_expression
-	| declarator '=' function_call
+	: ';'
+	| expression ';' {$$ = $1;}
 	;
 
 conditional_statement
-	: IF '(' condition ')' compound_statement %prec REDUCE 
-	| IF '(' condition ')' compound_statement ELSE compound_statement 
-	;
-
-condition
-	: expression logop expression 
-	| expression
+	: IF '(' expression ')' statement {$$ = opr(IF, 2, $3, $5);}
+	| IF '(' expression ')' statement ELSE statement
 	;
 
 iteration_statement
-	: DO compound_statement  WHILE '(' condition ')' ';'
+	: DO statement  WHILE '(' expression ')' ';' {$$ = opr(DO, 2, $2, $5);}
 	;
 
 break_statement
@@ -274,7 +277,7 @@ continue_statement
 
 return_statement
 	: RETURN ';' 
-	| RETURN simple_expression ';'
+	| RETURN expression ';'
 	;
 
 %%

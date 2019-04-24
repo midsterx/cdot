@@ -16,8 +16,18 @@ int check_type(void);
 "/*"			{ comment(); }
 "//"[^\n]*      { /* consume //-single comment */ }
 
-"#include"[ ]*"<".*">" { show(); return(HEADER); }
-"#include"[ ]*"\"".*"\"" { show(); return(HEADER); }
+"#"		{ return HASH; }
+include		{ return INCLUDE; }
+define		{ return DEFINE; }
+
+"math.h"	{ return MATH; }
+"stdio.h"	{ return STDIO; }
+"stdlib.h"	{ return STDLIB; }
+"string.h"	{ return STRING; }
+"time.h"	{ return TIME; }
+
+\"[a-zA-Z_0-9]+(".h"|".c")\"				{return HEADER_LITERAL;}
+
 "do"			{ show(); return(DO); }
 "else"			{ show(); return(ELSE); }
 "if"			{ show(); return(IF); }
@@ -34,6 +44,7 @@ int check_type(void);
 "unsigned"         { show(); strcpy(yylval.string,yytext); return(UNSIGNED); }
 "signed"         { show(); strcpy(yylval.string,yytext); return(SIGNED); }
 
+main		{ strcpy(yylval.string,yytext); return(MAIN); }
 
 "static" { show(); return(STATIC); }
 "extern" { show(); return(EXTERN); }

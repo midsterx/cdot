@@ -66,6 +66,7 @@ void exNode( nodeType *p,  int c, int l, /* start column and line of node */  in
 			case LE_OP: s = "[<=]"; break;
 			case NE_OP: s = "[!=]"; break;
 			case EQ_OP: s = "[==]"; break;
+			case IF: s = "[if]"; break;
 		}
 	break;
 	}
@@ -111,7 +112,6 @@ void exNode( nodeType *p,  int c, int l, /* start column and line of node */  in
 #define lmax 250
 #define cmax 250
 char graph[lmax][cmax]; /* array for ASCII-Graphic */
-int graphNumber = 0;
 
 void graphTest (int l, int c)
 {
@@ -153,7 +153,7 @@ void graphFinish()
 			graph[i][j] = 0;
 	}
 	for (i = lmax-1; i > 0 && graph[i][0] == 0; i--);
-	printf ("\n\nGraph %d:\n", graphNumber++);
+	printf ("\n\nAbstract Syntax Tree :\n");
 	for (j = 0; j <= i; j++) printf ("\n%s", graph[j]);
 	printf("\n");
 }

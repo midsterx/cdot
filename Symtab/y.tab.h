@@ -126,7 +126,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 19 "test.y" /* yacc.c:1909  */
+#line 20 "test.y" /* yacc.c:1909  */
 
 	int ival;
 	long int lival;

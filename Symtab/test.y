@@ -11,6 +11,7 @@
 	extern char yytext[];
 	char gvar[15] = "";
 	int gscope = 0;
+	int gval = 0;
 	int yylex(void);
 	int yyerror(const char *s);
 %}
@@ -87,14 +88,14 @@ param_decl
 declarator
 	: IDENTIFIER
 		{
-			superAdd(symtab, $1, 1, yylineno, gvar, 0, 4); 
+			superAdd(symtab, $1, 1, yylineno, gvar, gval, 4, gscope); 
 			strcpy(gvar,"");
 		}    
 	;
 
 declaration
 	: scoped_type_specifier init_declarator_list ';' 
-	| STRUCT IDENTIFIER { superAdd(symtab, $2, 1, yylineno, $1, 0, 4);} declarator ';'
+	| STRUCT IDENTIFIER { superAdd(symtab, $2, 1, yylineno, $1, 0, 4, gscope);} declarator ';'
 	| scoped_type_specifier ';' 
 	;
 
@@ -144,12 +145,12 @@ type_specifier
 	;
 
 record_declaration
-	: STRUCT IDENTIFIER '{' { gscope++; symtab = addScope(symtab,gscope); } simple_declaration '}' { gscope--;/*delScope(symtab);*/ } ';'
+	: STRUCT IDENTIFIER '{' { gscope++; symtab = addScope(symtab,gscope); } simple_declaration '}' { gscope--;leaveScope(symtab); } ';'
 	;
 
 simple_declaration
-	: type_specifier IDENTIFIER { superAdd(symtab, $2, 1, yylineno, $1, 0, 4); }';'
-	| simple_declaration type_specifier IDENTIFIER { superAdd(symtab, $3, 1, yylineno, $2, 0, 4); }';'
+	: type_specifier IDENTIFIER { superAdd(symtab, $2, 1, yylineno, $1, gval, 4, gscope); }';'
+	| simple_declaration type_specifier IDENTIFIER { superAdd(symtab, $3, 1, yylineno, $2, gval, 4, gscope); }';'
 	;
 
 
@@ -190,8 +191,8 @@ expression
 
 
 compound_statement
-	: '{' { gscope++; symtab = addScope(symtab,gscope); } '}' { gscope--;/*delScope(symtab);*/ }
-	| '{' { gscope++; symtab = addScope(symtab,gscope); } block_scope_list '}' { gscope--;/*delScope(symtab);*/ }
+	: '{' { gscope++; symtab = addScope(symtab,gscope); } '}' { gscope--;leaveScope(symtab); }
+	| '{' { gscope++; symtab = addScope(symtab,gscope); } block_scope_list '}' { gscope--;leaveScope(symtab); }
 	;
 
 block_scope_list

@@ -142,17 +142,17 @@
 		top=top-n;
 	}
 
-	void codegen_function_name(int n,int hasReturnType)
+	void codegen_function_name(int n,int hasReturnType) 
 	{
 		if(ISFUNCCALL > 0) {
 			if(hasReturnType) {
-				fprintf(f1,"%s\t=\tcall %s %d\n",st[top-1],st[top],n);
+				fprintf(f1,"%s\t=\tcall %s,%d\n",st[top-1],st[top],n);
 				top-=2;
 			} else {
-				fprintf(f1,"call %s %d\n",st[top],n);
+				fprintf(f1,"call %s,%d\n",st[top],n);
 				top-=1;
 			}
-		}
+		}  	
 	}
 
 	void codegen_conditional_if()
