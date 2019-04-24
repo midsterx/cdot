@@ -67,6 +67,7 @@ void exNode( nodeType *p,  int c, int l, /* start column and line of node */  in
 			case NE_OP: s = "[!=]"; break;
 			case EQ_OP: s = "[==]"; break;
 			case IF: s = "[if]"; break;
+			case DO: s = "[dowhile]"; break;
 		}
 	break;
 	}

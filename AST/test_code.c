@@ -6,4 +6,8 @@ int main()
   j = i-k;
   if (i)
     k = 2;
+  do 
+  {
+    i = i - 2;
+  } while (k);
 }
