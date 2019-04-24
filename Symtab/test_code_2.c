@@ -2,7 +2,7 @@
 
 struct node
 {
-	int a = 2;
+	int a;
 	char b;
 };
 

@@ -2,10 +2,28 @@
 2 
 3 int main ( int c , int d ) 
 4 { 
-5 if ( x > y ) 
-6 { 
-7 u = 1 ; 
-8 } 
-9 fact = u ; 
-10 } 
-11 
+5 a = 3 + 5 * 4 + 2 ; 
+6 a = b * 3 ; 
+7 c = d + 4 ; 
+8 int var = 3 , i = d ; 
+9 int a = c + d + 2 ; 
+10 int b = f ( a , b , c ) ; 
+11 b = f ( a , b , c ) ; 
+12 f ( a , b , c ) ; 
+13 
+14 if ( x > y ) 
+15 { 
+16 	 u = 1 ; 
+17 } 
+18 fact = u ; 
+19 
+20 do 
+21 { 
+22 u = 2 ; 
+23 } while ( z > w ) ; 
+24 
+25 if ( x > y ) 
+26 { 
+27 	 u = 1 ; 
+28 } 
+29 } 

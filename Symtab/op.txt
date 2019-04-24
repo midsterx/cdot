@@ -27,19 +27,20 @@
 27 
 28 
 
+29 
 
 SYMBOL TABLE
 
-Token	Type	Value	Scope	Line No.
-y	int	0	2	19
-a		0	2	20
-d	int	0	2	22
-z	float	0	2	23
-a		0	2	14
-a	int	0	1	11
-b		0	1	11
-a	int	0	1	5
-b	char	0	1	6
-fun	void	0	1	9
-x	int	0	1	9
-y	char	0	1	9
+Token	Type	Scope	Line No.
+y	int	2	19
+a		2	20
+d	int	1	22
+z	float	1	23
+a		2	14
+a	int	1	11
+b		1	11
+a	int	1	5
+b	char	1	6
+fun	void	0	9
+x	int	0	9
+y	char	0	9

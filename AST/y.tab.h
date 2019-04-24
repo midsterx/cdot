@@ -34,7 +34,7 @@
 # define YY_YY_Y_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+# define YYDEBUG 1
 #endif
 #if YYDEBUG
 extern int yydebug;
@@ -45,96 +45,118 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    HEADER = 258,
-    IF = 259,
-    ELSE = 260,
-    WHILE = 261,
-    DO = 262,
-    BREAK = 263,
-    CONTINUE = 264,
-    RETURN = 265,
-    SHORTHANDADD = 266,
-    SHORTHANDSUB = 267,
-    SHORTHANDMULT = 268,
-    SHORTHANDDIV = 269,
-    INCREMENT = 270,
-    DECREMENT = 271,
-    IDENTIFIER = 272,
-    CONSTANT = 273,
-    TYPE_NAME = 274,
-    CHAR = 275,
-    INT = 276,
-    LONG = 277,
-    FLOAT = 278,
-    DOUBLE = 279,
-    VOID = 280,
-    SHORT = 281,
-    UNSIGNED = 282,
-    SIGNED = 283,
-    STRUCT = 284,
-    RELOP = 285,
-    AND = 286,
-    OR = 287,
-    NOT = 288,
-    STATIC = 289,
-    EXTERN = 290,
-    REGISTER = 291,
-    AUTO = 292,
-    ARRTYPE = 293
+    HASH = 258,
+    INCLUDE = 259,
+    DEFINE = 260,
+    STDIO = 261,
+    STDLIB = 262,
+    MATH = 263,
+    STRING = 264,
+    TIME = 265,
+    HEADER_LITERAL = 266,
+    IF = 267,
+    ELSE = 268,
+    WHILE = 269,
+    DO = 270,
+    BREAK = 271,
+    CONTINUE = 272,
+    RETURN = 273,
+    SHORTHANDADD = 274,
+    SHORTHANDSUB = 275,
+    SHORTHANDMULT = 276,
+    SHORTHANDDIV = 277,
+    INCREMENT = 278,
+    DECREMENT = 279,
+    IDENTIFIER = 280,
+    CONSTANT = 281,
+    TYPE_NAME = 282,
+    CHAR = 283,
+    INT = 284,
+    LONG = 285,
+    FLOAT = 286,
+    DOUBLE = 287,
+    VOID = 288,
+    MAIN = 289,
+    SHORT = 290,
+    UNSIGNED = 291,
+    SIGNED = 292,
+    STRUCT = 293,
+    GE_OP = 294,
+    LE_OP = 295,
+    NE_OP = 296,
+    EQ_OP = 297,
+    AND = 298,
+    OR = 299,
+    NOT = 300,
+    STATIC = 301,
+    EXTERN = 302,
+    REGISTER = 303,
+    AUTO = 304,
+    ARRTYPE = 305
   };
 #endif
 /* Tokens.  */
-#define HEADER 258
-#define IF 259
-#define ELSE 260
-#define WHILE 261
-#define DO 262
-#define BREAK 263
-#define CONTINUE 264
-#define RETURN 265
-#define SHORTHANDADD 266
-#define SHORTHANDSUB 267
-#define SHORTHANDMULT 268
-#define SHORTHANDDIV 269
-#define INCREMENT 270
-#define DECREMENT 271
-#define IDENTIFIER 272
-#define CONSTANT 273
-#define TYPE_NAME 274
-#define CHAR 275
-#define INT 276
-#define LONG 277
-#define FLOAT 278
-#define DOUBLE 279
-#define VOID 280
-#define SHORT 281
-#define UNSIGNED 282
-#define SIGNED 283
-#define STRUCT 284
-#define RELOP 285
-#define AND 286
-#define OR 287
-#define NOT 288
-#define STATIC 289
-#define EXTERN 290
-#define REGISTER 291
-#define AUTO 292
-#define ARRTYPE 293
+#define HASH 258
+#define INCLUDE 259
+#define DEFINE 260
+#define STDIO 261
+#define STDLIB 262
+#define MATH 263
+#define STRING 264
+#define TIME 265
+#define HEADER_LITERAL 266
+#define IF 267
+#define ELSE 268
+#define WHILE 269
+#define DO 270
+#define BREAK 271
+#define CONTINUE 272
+#define RETURN 273
+#define SHORTHANDADD 274
+#define SHORTHANDSUB 275
+#define SHORTHANDMULT 276
+#define SHORTHANDDIV 277
+#define INCREMENT 278
+#define DECREMENT 279
+#define IDENTIFIER 280
+#define CONSTANT 281
+#define TYPE_NAME 282
+#define CHAR 283
+#define INT 284
+#define LONG 285
+#define FLOAT 286
+#define DOUBLE 287
+#define VOID 288
+#define MAIN 289
+#define SHORT 290
+#define UNSIGNED 291
+#define SIGNED 292
+#define STRUCT 293
+#define GE_OP 294
+#define LE_OP 295
+#define NE_OP 296
+#define EQ_OP 297
+#define AND 298
+#define OR 299
+#define NOT 300
+#define STATIC 301
+#define EXTERN 302
+#define REGISTER 303
+#define AUTO 304
+#define ARRTYPE 305
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 
 union YYSTYPE
 {
-#line 19 "test.y" /* yacc.c:1909  */
+#line 30 "ast.y" /* yacc.c:1909  */
 
 	int ival;
-	long int lival;
-	double dval;
-	float fval;
-	char* idname;
+	struct nodeType *nPtr;
+	char string[128];
 
-#line 138 "y.tab.h" /* yacc.c:1909  */
+#line 160 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
