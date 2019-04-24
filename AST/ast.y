@@ -264,7 +264,7 @@ conditional_statement
 	;
 
 iteration_statement
-	: DO statement  WHILE '(' expression ')' ';' {$$ = opr(DO, 2, $2, $5);}
+	: DO statement WHILE '(' expression ')' ';' {$$ = opr(DO, 2, $2, $5);}
 	;
 
 break_statement
