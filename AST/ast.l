@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "y.tab.h"
 #include <string.h>
-#include "header.h"
+#include "structs.h"
 int line1_flag = 0;
 
 void show(void);

@@ -150,7 +150,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 30 "ast.y" /* yacc.c:1909  */
+#line 22 "ast.y" /* yacc.c:1909  */
 
 	int ival;
 	struct nodeType *nPtr;
